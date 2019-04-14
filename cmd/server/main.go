@@ -25,6 +25,7 @@ func main() {
 		s := new(memory.Storage)
 		adder = adding.NewService(s)
 		lister = listing.NewService(s)
+	// more data stores can be supported
 	}
 
 	app := new(rest.App)
