@@ -9,6 +9,7 @@ func init() {
 	templateList := []string{
 		"templates/add.gohtml",
 		"templates/list.gohtml",
+		"templates/detail.gohtml",
 	}
 	TPL = template.Must(template.ParseFiles(templateList...))
 }
