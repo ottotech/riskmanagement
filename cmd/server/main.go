@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-const  (
+const (
 	Memory int = 1
 )
 
@@ -20,7 +20,7 @@ func main() {
 	var adder adding.Service
 	var lister listing.Service
 
-	switch storageType  {
+	switch storageType {
 	case Memory:
 		s := new(memory.Storage)
 		adder = adding.NewService(s)
@@ -29,8 +29,9 @@ func main() {
 
 	app := new(rest.App)
 	mux := http.NewServeMux()
-	mux.Handle("/", app.HomeHandler.Handler(lister))
+	mux.Handle("/", app.HomeHandler.Handler())
 	mux.Handle("/add", app.AddHandler.Handler(adder))
+	mux.Handle("/list", app.ListHandler.Handler(lister))
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: mux,
