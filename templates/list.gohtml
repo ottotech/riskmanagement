@@ -12,7 +12,6 @@
             position: fixed;
             top: 20%;
             left: 50%;
-            /* bring your own prefixes */
             transform: translate(-50%, -50%);
             background-color: #54a5e3;
         }
@@ -22,9 +21,21 @@
     </style>
 </head>
 <body>
-
+{{$RiskMatrixList := .}} <!-- Cool stuff -->
 <div class="centered">
     <h2>RISK MATRIX STORED</h2>
+
+    {{if gt (len $RiskMatrixList) 0 }}
+        <ul>
+            {{range $RiskMatrixList}}
+                <li>{{.ID}}</li>
+            {{end}}
+        </ul>
+    {{else}}
+        <p style="color: red">There are no risk matrix registered.</p>
+    {{end}}
+    <br>
+    <a href="/add">Create new risk matrix?</a>
 </div>
 
 </body>

@@ -10,21 +10,23 @@ import (
 )
 
 type App struct {
-	HomeHandler *HomeHandler
-	AddHandler  *AddHandler
 	ListHandler *ListHandler
+	AddHandler  *AddHandler
 }
 
-type HomeHandler struct {
+type ListHandler struct {
 }
 
-func (h *HomeHandler) Handler(s listing.Service) http.Handler {
+func (h *ListHandler) Handler(s listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
 		}
-		err := config.TPL.ExecuteTemplate(w, "list.gohtml", nil)
+
+		list := s.GetAllRiskMatrix()
+
+		err := config.TPL.ExecuteTemplate(w, "list.gohtml", list)
 		if err != nil {
 			log.Print(err.Error())
 			http.Error(w, fmt.Sprintf("Template error: %s", err.Error()), http.StatusInternalServerError)
@@ -33,17 +35,14 @@ func (h *HomeHandler) Handler(s listing.Service) http.Handler {
 	})
 }
 
-type CreateRiskMatrixHandler struct {
+
+type AddHandler struct {
 }
 
-func (h *CreateRiskMatrixHandler) Handler(s adding.Service) http.Handler {
+func (h *AddHandler) Handler(s adding.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
-			return
-		}
 		if r.Method == http.MethodGet {
-			err := config.TPL.ExecuteTemplate(w, "index.gohtml", nil)
+			err := config.TPL.ExecuteTemplate(w, "add.gohtml", nil)
 			if err != nil {
 				log.Print(err.Error())
 				http.Error(w, fmt.Sprintf("Template error: %s", err.Error()), http.StatusInternalServerError)
@@ -53,20 +52,3 @@ func (h *CreateRiskMatrixHandler) Handler(s adding.Service) http.Handler {
 	})
 }
 
-type AddHandler struct {
-}
-
-func (h *AddHandler) Handler(s adding.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		s.AddRiskMatrix()
-	})
-}
-
-type ListHandler struct {
-}
-
-func (h *ListHandler) Handler(s listing.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-	})
-}
