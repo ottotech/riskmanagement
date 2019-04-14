@@ -123,6 +123,36 @@ func (m *Storage) GetRiskMatrix(id int) (listing.RiskMatrix, error) {
 	return riskMatrix, errors.New("risk matrix not found")
 }
 
+// GetAllRiskMatrix returns all the risk matrix stored in the database
+func (m *Storage) GetAllRiskMatrix() []listing.RiskMatrix {
+	var list []listing.RiskMatrix
+
+	for i := range m.riskMatrixSlice {
+		riskMatrix := listing.RiskMatrix{
+			ID:					m.riskMatrixSlice[i].ID,
+			Path:				m.riskMatrixSlice[i].Path,
+			Project:			m.riskMatrixSlice[i].Project,
+			MatImgWidth:		m.riskMatrixSlice[i].MatImgWidth,
+			MatImgHeight:		m.riskMatrixSlice[i].MatImgHeight,
+			MatNrRows:			m.riskMatrixSlice[i].MatNrRows,
+			MatNrCols:			m.riskMatrixSlice[i].MatNrCols,
+			MatSize:			m.riskMatrixSlice[i].MatSize,
+			BorderWidth:		m.riskMatrixSlice[i].BorderWidth,
+			Multiple:			m.riskMatrixSlice[i].Multiple,
+			WordHeight:			m.riskMatrixSlice[i].WordHeight,
+			WordWidth:			m.riskMatrixSlice[i].WordWidth,
+			HighRiskColor:		m.riskMatrixSlice[i].HighRiskColor,
+			MediumRiskColor:	m.riskMatrixSlice[i].MediumRiskColor,
+			LowRiskColor:		m.riskMatrixSlice[i].LowRiskColor,
+			RiskLabelColor:		m.riskMatrixSlice[i].RiskLabelColor,
+			BorderColor:		m.riskMatrixSlice[i].BorderColor,
+		}
+		list = append(list, riskMatrix)
+	}
+
+	return list
+}
+
 // GetAll returns all the risks for a given risk matrix
 func (m *Storage) GetAllRisks(riskMatrixID int) []listing.Risk {
 	var list []listing.Risk

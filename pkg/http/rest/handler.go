@@ -18,12 +18,13 @@ type App struct {
 type HomeHandler struct {
 }
 
-func (h *HomeHandler) Handler() http.Handler {
+func (h *HomeHandler) Handler(s listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
 		}
+
 		err := config.TPL.ExecuteTemplate(w, "index.gohtml", nil)
 		if err != nil {
 			log.Print(err.Error())
@@ -38,7 +39,7 @@ type AddHandler struct {
 
 func (h *AddHandler) Handler(s adding.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
+		s.AddRiskMatrix()
 	})
 }
 
