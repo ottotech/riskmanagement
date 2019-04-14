@@ -129,27 +129,26 @@ func (m *Storage) GetAllRiskMatrix() []listing.RiskMatrix {
 
 	for i := range m.riskMatrixSlice {
 		riskMatrix := listing.RiskMatrix{
-			ID:					m.riskMatrixSlice[i].ID,
-			Path:				m.riskMatrixSlice[i].Path,
-			Project:			m.riskMatrixSlice[i].Project,
-			MatImgWidth:		m.riskMatrixSlice[i].MatImgWidth,
-			MatImgHeight:		m.riskMatrixSlice[i].MatImgHeight,
-			MatNrRows:			m.riskMatrixSlice[i].MatNrRows,
-			MatNrCols:			m.riskMatrixSlice[i].MatNrCols,
-			MatSize:			m.riskMatrixSlice[i].MatSize,
-			BorderWidth:		m.riskMatrixSlice[i].BorderWidth,
-			Multiple:			m.riskMatrixSlice[i].Multiple,
-			WordHeight:			m.riskMatrixSlice[i].WordHeight,
-			WordWidth:			m.riskMatrixSlice[i].WordWidth,
-			HighRiskColor:		m.riskMatrixSlice[i].HighRiskColor,
-			MediumRiskColor:	m.riskMatrixSlice[i].MediumRiskColor,
-			LowRiskColor:		m.riskMatrixSlice[i].LowRiskColor,
-			RiskLabelColor:		m.riskMatrixSlice[i].RiskLabelColor,
-			BorderColor:		m.riskMatrixSlice[i].BorderColor,
+			ID:              m.riskMatrixSlice[i].ID,
+			Path:            m.riskMatrixSlice[i].Path,
+			Project:         m.riskMatrixSlice[i].Project,
+			MatImgWidth:     m.riskMatrixSlice[i].MatImgWidth,
+			MatImgHeight:    m.riskMatrixSlice[i].MatImgHeight,
+			MatNrRows:       m.riskMatrixSlice[i].MatNrRows,
+			MatNrCols:       m.riskMatrixSlice[i].MatNrCols,
+			MatSize:         m.riskMatrixSlice[i].MatSize,
+			BorderWidth:     m.riskMatrixSlice[i].BorderWidth,
+			Multiple:        m.riskMatrixSlice[i].Multiple,
+			WordHeight:      m.riskMatrixSlice[i].WordHeight,
+			WordWidth:       m.riskMatrixSlice[i].WordWidth,
+			HighRiskColor:   m.riskMatrixSlice[i].HighRiskColor,
+			MediumRiskColor: m.riskMatrixSlice[i].MediumRiskColor,
+			LowRiskColor:    m.riskMatrixSlice[i].LowRiskColor,
+			RiskLabelColor:  m.riskMatrixSlice[i].RiskLabelColor,
+			BorderColor:     m.riskMatrixSlice[i].BorderColor,
 		}
 		list = append(list, riskMatrix)
 	}
-
 	return list
 }
 

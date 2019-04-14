@@ -25,12 +25,12 @@ func main() {
 		s := new(memory.Storage)
 		adder = adding.NewService(s)
 		lister = listing.NewService(s)
-	// more data stores can be supported
+		// more data stores can be supported
 	}
 
 	app := new(rest.App)
 	mux := http.NewServeMux()
-	mux.Handle("/", app.HomeHandler.Handler())
+	mux.Handle("/", app.HomeHandler.Handler(lister))  // home
 	mux.Handle("/add", app.AddHandler.Handler(adder))
 	mux.Handle("/list", app.ListHandler.Handler(lister))
 	server := http.Server{

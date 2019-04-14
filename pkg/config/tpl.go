@@ -5,5 +5,10 @@ import "html/template"
 var TPL *template.Template
 
 func init() {
-	TPL = template.Must(template.ParseFiles("templates/index.gohtml"))
+	// be aware of duplicated template names, this is done this way for simplicity
+	templateList := []string{
+		"templates/index.gohtml",
+		"templates/list.gohtml",
+	}
+	TPL = template.Must(template.ParseFiles(templateList...))
 }

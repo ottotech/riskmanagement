@@ -4,11 +4,14 @@ package listing
 type Service interface {
 	GetRiskMatrix(int) (RiskMatrix, error)
 	GetAllRisks(int) []Risk
+	GetAllRiskMatrix() []RiskMatrix
 }
 
 type Repository interface {
 	// GetRiskMatrix returns the risk matrix with the given ID
 	GetRiskMatrix(int) (RiskMatrix, error)
+	// GetAllRiskMatrix returns all the risk matrix stored
+	GetAllRiskMatrix() []RiskMatrix
 	// GetAllRisks returns a list of all risks for a given RiskMatrix ID
 	GetAllRisks(int) []Risk
 }
@@ -25,6 +28,11 @@ func NewService(r Repository) Service {
 // GetRiskMatrix returns a beer
 func (s *service) GetRiskMatrix(id int) (RiskMatrix, error) {
 	return s.r.GetRiskMatrix(id)
+}
+
+// GetAllRiskMatrix returns all the risk matrix stored
+func (s *service) GetAllRiskMatrix() []RiskMatrix {
+	return s.r.GetAllRiskMatrix()
 }
 
 // GetAllRisks returns all risks specified in a RiskMatrix

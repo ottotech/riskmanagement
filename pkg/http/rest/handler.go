@@ -24,13 +24,32 @@ func (h *HomeHandler) Handler(s listing.Service) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
-
-		err := config.TPL.ExecuteTemplate(w, "index.gohtml", nil)
+		err := config.TPL.ExecuteTemplate(w, "list.gohtml", nil)
 		if err != nil {
 			log.Print(err.Error())
 			http.Error(w, fmt.Sprintf("Template error: %s", err.Error()), http.StatusInternalServerError)
 		}
 		return
+	})
+}
+
+type CreateRiskMatrixHandler struct {
+}
+
+func (h *CreateRiskMatrixHandler) Handler(s adding.Service) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
+			return
+		}
+		if r.Method == http.MethodGet {
+			err := config.TPL.ExecuteTemplate(w, "index.gohtml", nil)
+			if err != nil {
+				log.Print(err.Error())
+				http.Error(w, fmt.Sprintf("Template error: %s", err.Error()), http.StatusInternalServerError)
+			}
+			return
+		}
 	})
 }
 
