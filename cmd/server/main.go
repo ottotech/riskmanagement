@@ -30,7 +30,7 @@ func main() {
 
 	app := new(rest.App)
 	mux := http.NewServeMux()
-	mux.Handle("/", app.List.Handler(lister))  // home
+	mux.Handle("/", app.List.Handler(lister)) // home
 	mux.Handle("/add", app.Add.Handler(adder))
 	mux.Handle("/get/", app.Get.Handler(lister))
 	server := http.Server{

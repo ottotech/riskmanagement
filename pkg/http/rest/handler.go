@@ -16,7 +16,7 @@ import (
 type App struct {
 	List *List
 	Add  *Add
-	Get *Get
+	Get  *Get
 }
 
 type List struct {
@@ -35,7 +35,6 @@ func (h *List) Handler(s listing.Service) http.Handler {
 	})
 }
 
-
 type Add struct {
 }
 
@@ -51,7 +50,7 @@ func (h *Add) Handler(s adding.Service) http.Handler {
 		}
 
 		p := r.PostFormValue("project")
-		rm := adding.RiskMatrix{Project:p}
+		rm := adding.RiskMatrix{Project: p}
 		s.AddRiskMatrix(rm)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -84,10 +83,9 @@ func (h *Get) Handler(s listing.Service) http.Handler {
 				return
 			}
 
-			utils.RenderTemplate(w,"detail.gohtml", rm)
+			utils.RenderTemplate(w, "detail.gohtml", rm)
 			return
 		}
 
 	})
 }
-
