@@ -18,14 +18,19 @@
         .centered * {
             padding: 5px 10px;
         }
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
-
+{{$Error := .}} <!-- Cool stuff -->
 <div class="centered">
     <h2>Create project</h2>
     <a href="/">Return</a>
-    <img src="/" alt="Risk Matrix" width="600" height="600">
+    {{if $Error }}
+        <p class="error">{{$Error}}</p>
+    {{end}}
     <form action="/add" method="post" autocomplete="off">
         <label for="project">Project Name:</label>
         <input id="project" type="text" name="project">

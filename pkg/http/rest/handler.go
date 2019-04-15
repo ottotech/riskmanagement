@@ -3,7 +3,6 @@ package rest
 import (
 	"fmt"
 	"github.com/ottotech/riskmanagement/pkg/adding"
-	"github.com/ottotech/riskmanagement/pkg/config"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"github.com/ottotech/riskmanagement/pkg/utils"
 	"log"
@@ -41,15 +40,16 @@ type Add struct {
 func (h *Add) Handler(s adding.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			err := config.TPL.ExecuteTemplate(w, "add.gohtml", nil)
-			if err != nil {
-				log.Print(err.Error())
-				http.Error(w, fmt.Sprintf("Template error: %s", err.Error()), http.StatusInternalServerError)
-			}
+			utils.RenderTemplate(w, "add.gohtml", nil)
 			return
 		}
 
 		p := r.PostFormValue("project")
+		if p == "" {
+			utils.RenderTemplate(w, "add.gohtml", "Error: You need to specify the project name.")
+			return
+		}
+
 		rm := adding.RiskMatrix{Project: p}
 		s.AddRiskMatrix(rm)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
