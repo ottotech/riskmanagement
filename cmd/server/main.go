@@ -31,8 +31,9 @@ func main() {
 	app := new(rest.App)
 	mux := http.NewServeMux()
 	mux.Handle("/", app.List.Handler(lister)) // home
-	mux.Handle("/add", app.Add.Handler(adder))
+	mux.Handle("/add", app.Add.Handler(adder, lister))
 	mux.Handle("/get/", app.Get.Handler(lister))
+	mux.Handle("/media/", app.Media.Handler())
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: mux,

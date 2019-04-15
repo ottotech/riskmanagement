@@ -24,11 +24,11 @@ const (
 
 // colors
 var (
-	red    = &color.RGBA{R: 0xff, A: 0xff}                   // rgb(255, 0, 0) high risk
-	yellow = &color.RGBA{R: 0xff, G: 0xff, A: 0xff}          // rgb(255, 255, 0) medium risk
-	green  = &color.RGBA{R: 0x90, G: 0xee, B: 0x90, A: 0xff} // rgb(144, 238, 144) low risk
-	white  = &color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xff} // rgb(255, 255, 255) border color
-	black  = &color.RGBA{A: 0xff}                            // rgb(0, 0, 0) label color
+	red    = color.RGBA{R: 0xff, A: 0xff}                   // rgb(255, 0, 0) high risk
+	yellow = color.RGBA{R: 0xff, G: 0xff, A: 0xff}          // rgb(255, 255, 0) medium risk
+	green  = color.RGBA{R: 0x90, G: 0xee, B: 0x90, A: 0xff} // rgb(144, 238, 144) low risk
+	white  = color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xff} // rgb(255, 255, 255) border color
+	black  = color.RGBA{A: 0xff}                            // rgb(0, 0, 0) label color
 )
 
 // Memory storage keeps data in memory
@@ -121,6 +121,37 @@ func (m *Storage) GetRiskMatrix(id int) (listing.RiskMatrix, error) {
 	}
 
 	return riskMatrix, errors.New("risk matrix not found")
+}
+
+// GetRiskMatrixByPath returns a risk matrix with the specified image path
+func (m *Storage) GetRiskMatrixByPath(p string) (listing.RiskMatrix, error) {
+	var riskMatrix listing.RiskMatrix
+
+	for i := range m.riskMatrixSlice {
+
+		if m.riskMatrixSlice[i].Path == p {
+			riskMatrix.ID = m.riskMatrixSlice[i].ID
+			riskMatrix.Path = m.riskMatrixSlice[i].Path
+			riskMatrix.Project = m.riskMatrixSlice[i].Project
+			riskMatrix.MatImgWidth = m.riskMatrixSlice[i].MatImgWidth
+			riskMatrix.MatImgHeight = m.riskMatrixSlice[i].MatImgHeight
+			riskMatrix.MatNrRows = m.riskMatrixSlice[i].MatNrRows
+			riskMatrix.MatNrCols = m.riskMatrixSlice[i].MatNrCols
+			riskMatrix.MatSize = m.riskMatrixSlice[i].MatSize
+			riskMatrix.BorderWidth = m.riskMatrixSlice[i].BorderWidth
+			riskMatrix.Multiple = m.riskMatrixSlice[i].Multiple
+			riskMatrix.WordHeight = m.riskMatrixSlice[i].WordHeight
+			riskMatrix.WordWidth = m.riskMatrixSlice[i].WordWidth
+			riskMatrix.HighRiskColor = m.riskMatrixSlice[i].HighRiskColor
+			riskMatrix.MediumRiskColor = m.riskMatrixSlice[i].MediumRiskColor
+			riskMatrix.LowRiskColor = m.riskMatrixSlice[i].LowRiskColor
+			riskMatrix.RiskLabelColor = m.riskMatrixSlice[i].RiskLabelColor
+			riskMatrix.BorderColor = m.riskMatrixSlice[i].BorderColor
+			return riskMatrix, nil
+		}
+	}
+
+	return riskMatrix, errors.New(fmt.Sprintf("risk matrix not found by the given path: %v", p))
 }
 
 // GetAllRiskMatrix returns all the risk matrix stored in the database

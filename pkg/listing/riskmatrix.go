@@ -15,9 +15,9 @@ type RiskMatrix struct {
 	Multiple        int
 	WordHeight      int
 	WordWidth       int
-	HighRiskColor   *color.RGBA
-	MediumRiskColor *color.RGBA
-	LowRiskColor    *color.RGBA
-	RiskLabelColor  *color.RGBA
-	BorderColor     *color.RGBA
+	HighRiskColor   color.RGBA
+	MediumRiskColor color.RGBA
+	LowRiskColor    color.RGBA
+	RiskLabelColor  color.RGBA
+	BorderColor     color.RGBA
 }

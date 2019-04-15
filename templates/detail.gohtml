@@ -7,24 +7,12 @@
     <meta name="author" content="Otto Schuldt">
     <title>Risk Assessment APP</title>
     <link rel="shortcut icon" href="/style/images/favicon.png">
-    <style>
-        .centered {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #54a5e3;
-        }
-        .centered * {
-            padding: 5px 10px;
-        }
-    </style>
 </head>
 <body>
 {{$RiskMatrix := .}} <!-- Cool stuff -->
 <div class="centered">
     <h2>RISK MATRIX DETAIL</h2>
-    <img src="/" alt="Risk Matrix" width="600" height="600">
+    <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="600" height="600">
     <p>{{$RiskMatrix.Project}}</p>
     <br>
     <a href="/">Return</a>
