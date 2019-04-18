@@ -48,18 +48,18 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 			return
 		}
 
-		p := r.PostFormValue("project")
-		if p == "" {
+		name := r.PostFormValue("project")
+		if name == "" {
 			utils.RenderTemplate(w, "add.gohtml", "Error: You need to specify the project name.")
 			return
 		}
 
 		t := time.Now().Format("02_01_2006_03_04_05")
 		filename := fmt.Sprintf("%v.png", t)
-		rm := adding.RiskMatrix{Project: p, Path: filename}
+		rm := adding.RiskMatrix{Project: name, Path: filename}
 		a.AddRiskMatrix(rm)
 		newRm, _ := l.GetRiskMatrixByPath(filename)
-		err := draw.DrawRiskMatrix(filename, newRm)
+		err := draw.RiskMatrixDrawer(filename, newRm)
 		if err != nil {
 			utils.RenderTemplate(w, "add.gohtml", err.Error())
 			return

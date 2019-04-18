@@ -15,7 +15,7 @@ import (
 	"path/filepath"
 )
 
-func DrawRiskMatrix(filename string, m listing.RiskMatrix) error {
+func RiskMatrixDrawer(filename string, m listing.RiskMatrix) error {
 	myImg := image.NewRGBA(image.Rect(0, 0, m.MatImgWidth, m.MatImgHeight))
 	wd, err := os.Getwd()
 	if err != nil {
@@ -49,6 +49,7 @@ func DrawRiskMatrix(filename string, m listing.RiskMatrix) error {
 		if blockNbr == 1 {
 			r := image.Rect(0, 0, m.Multiple, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			addLabel(myImg, "Code Failure", m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+2, m.RiskLabelColor)
 		}
 		if blockNbr == 2 {
 			r := image.Rect(m.Multiple, 0, m.Multiple*2, m.Multiple)
@@ -116,12 +117,11 @@ func drawRiskMatrixBorders(im *image.RGBA, m listing.RiskMatrix) {
 	draw.Draw(im, h2Border, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
 }
 
-func addLabel(img *image.RGBA, x, y int, label string, m listing.RiskMatrix) {
+func addLabel(img *image.RGBA, label string, x, y int, c color.RGBA) {
 	point := fixed.Point26_6{X: fixed.Int26_6(x * 64), Y: fixed.Int26_6(y * 64)}
-
 	d := &font.Drawer{
 		Dst:  img,
-		Src:  image.NewUniform(m.RiskLabelColor),
+		Src:  image.NewUniform(c),
 		Face: basicfont.Face7x13,
 		Dot:  point,
 	}
