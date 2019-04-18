@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/draw"
@@ -16,10 +17,11 @@ import (
 )
 
 type App struct {
-	List  *List
-	Add   *Add
-	Get   *Get
-	Media *Media
+	List    *List
+	Add     *Add
+	Get     *Get
+	Media   *Media
+	AddRisk *AddRisk
 }
 
 type List struct {
@@ -70,6 +72,36 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 	})
 }
 
+type AddRisk struct {
+}
+
+func (h *AddRisk) Handler(a adding.Service) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+		// response will be json
+		w.Header().Set("Content-Type", "application/json")
+
+		var risks []adding.Risk
+		data := r.PostFormValue("data")
+		err := json.Unmarshal([]byte(data), &risks)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte(err.Error()))
+			return
+		}
+
+		// adding risks
+		a.AddRisk(risks...)
+
+		// if all goes well we send a status 200
+		w.WriteHeader(http.StatusOK)
+	})
+}
+
 type Get struct {
 }
 
@@ -89,14 +121,28 @@ func (h *Get) Handler(s listing.Service) http.Handler {
 				return
 			}
 
-			rm, err := s.GetRiskMatrix(id)
+			// get risk matrix
+			riskMatrix, err := s.GetRiskMatrix(id)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 
-			utils.RenderTemplate(w, "detail.gohtml", rm)
+			// get all risks
+			risks := s.GetAllRisks(riskMatrix.ID)
+
+			// build context
+			ctx := struct {
+				RiskMatrix listing.RiskMatrix
+				Risks []listing.Risk
+			}{
+				riskMatrix,
+				risks,
+			}
+
+			// render tpl
+			utils.RenderTemplate(w, "detail.gohtml", ctx)
 			return
 		}
 

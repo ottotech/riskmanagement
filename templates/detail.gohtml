@@ -7,16 +7,132 @@
     <meta name="author" content="Otto Schuldt">
     <title>Risk Assessment APP</title>
     <link rel="shortcut icon" href="/style/images/favicon.png">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+        }
+        table {
+            border-collapse: collapse;
+            width: 500px;
+        }
+        th, tr {
+            height: 20px;
+        }
+        a {
+            color: #0f3e68;
+            cursor: pointer;
+        }
+        a:hover {
+            color: #00A8FF;
+        }
+    </style>
 </head>
 <body>
-{{$RiskMatrix := .}} <!-- Cool stuff -->
+{{$RiskMatrix := .RiskMatrix}} <!-- Cool stuff -->
+{{$Risks := .Risks}} <!-- Cool stuff -->
 <div class="centered">
     <h2>RISK MATRIX DETAIL</h2>
     <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="600" height="600">
     <p>{{$RiskMatrix.Project}}</p>
     <br>
     <a href="/">Return</a>
+    <br>
+    <a onclick="handleRiskCreation()">Add risk in Risk Matrix</a>
+    <a id="js_save" onclick="handleRisksSave(event)">Save</a>
+    <input tabindex="-1" id="js_risk_matrix_id" hidden value="{{$RiskMatrix.ID}}">
+    <table id="myTable">
+        <tr>
+            <th>Risk</th>
+            <th>Probability</th>
+            <th>Impact</th>
+            <th>Risk Classification</th>
+            <th>Risk Response Plan</th>
+        </tr>
+        {{if gt (len $Risks) 0 }}
+            {{range $Risks}}
+                <tr>
+                    <td>{{.Name}}</td>
+                    <td>{{.Probability}}</td>
+                    <td>{{.Impact}}</td>
+                    <td>{{.Classification}}</td>
+                    <td>{{.Strategy}}</td>
+                </tr>
+            {{end}}
+        {{end}}
+    </table>
 </div>
+
+<script>
+    function handleRiskCreation() {
+        // get table
+        let table = document.getElementById("myTable");
+        // insert/get new row
+        let newRow = table.insertRow(-1);
+        // insert/get cells
+        let cell1 = newRow.insertCell(0);
+        let cell2 = newRow.insertCell(1);
+        let cell3 = newRow.insertCell(2);
+        let cell4 = newRow.insertCell(3);
+        let cell5 = newRow.insertCell(4);
+        let list = [cell1, cell2, cell3, cell4, cell5];
+        // append input into cells
+        for (let i = 0; i < list.length; i++) {
+            // create input element
+            let input = document.createElement("INPUT");
+            // define input type
+            input.type = "text";
+            // append input into cell
+            list[i].appendChild(input);
+        }
+        // after expanding the table we go to the end of page.
+        // We might want to change this behavior when improving the UI.
+        window.scrollTo(0,document.body.scrollHeight);
+    }
+
+    function handleRisksSave(e) {
+        e.preventDefault();
+        // get table
+        let table = document.getElementById("myTable");
+        let rows = table.rows;
+        let list = [];
+        let riskMatrixID = document.getElementById("js_risk_matrix_id").value;
+        for (let i = 1; i < rows.length; i++) {
+            let obj = {};
+            let risk = rows[i].cells[0].childNodes[0].value;
+            let probability = rows[i].cells[1].childNodes[0].value;
+            let impact = rows[i].cells[2].childNodes[0].value;
+            let classification = rows[i].cells[3].childNodes[0].value;
+            let strategy = rows[i].cells[4].childNodes[0].value;
+            obj["risk_matrix_id"] = parseInt(riskMatrixID);
+            obj["name"] = risk;
+            obj["probability"] = parseInt(probability);
+            obj["impact"] = parseInt(impact);
+            obj["classification"] = classification;
+            obj["strategy"] = strategy;
+            list.push(obj);
+        }
+
+        // make AJAX request
+        let xhr = new XMLHttpRequest();
+        let formData = new FormData();
+
+        // handle response
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === XMLHttpRequest.DONE){
+                if (xhr.status === 200){
+                    console.log("SUCCESS");
+                }else if (xhr.status === 500) {
+                    console.log("ERROR");
+                    console.log(xhr.responseText);
+                }
+            }
+        };
+
+        formData.append("data", JSON.stringify(list));
+        xhr.open("POST", '/add-risks');
+        xhr.send(formData);
+    }
+</script>
 
 </body>
 </html>

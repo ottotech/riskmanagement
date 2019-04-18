@@ -76,13 +76,13 @@ func (m *Storage) AddRisk(r adding.Risk) error {
 		created := time.Now()
 		id := fmt.Sprintf("%d_%d", r.RiskMatrixID, created.Unix())
 		newR := Risk{
-			ID:           id,
-			RiskMatrixID: r.RiskMatrixID,
-			Name:         r.Name,
-			Probability:  r.Probability,
-			Impact:       r.Impact,
-			Strategy:     r.Strategy,
-			ResponsePlan: r.ResponsePlan,
+			ID:             id,
+			RiskMatrixID:   r.RiskMatrixID,
+			Name:           r.Name,
+			Probability:    r.Probability,
+			Impact:         r.Impact,
+			Classification: r.Classification,
+			Strategy:       r.Strategy,
 		}
 		m.risks = append(m.risks, newR)
 
@@ -190,13 +190,13 @@ func (m *Storage) GetAllRisks(riskMatrixID int) []listing.Risk {
 	for i := range m.risks {
 		if m.risks[i].RiskMatrixID == riskMatrixID {
 			r := listing.Risk{
-				ID:           m.risks[i].ID,
-				RiskMatrixID: m.risks[i].RiskMatrixID,
-				Name:         m.risks[i].Name,
-				Probability:  m.risks[i].Probability,
-				Impact:       m.risks[i].Impact,
-				Strategy:     m.risks[i].Strategy,
-				ResponsePlan: m.risks[i].ResponsePlan,
+				ID:             m.risks[i].ID,
+				RiskMatrixID:   m.risks[i].RiskMatrixID,
+				Name:           m.risks[i].Name,
+				Probability:    m.risks[i].Probability,
+				Impact:         m.risks[i].Impact,
+				Classification: m.risks[i].Classification,
+				Strategy:       m.risks[i].Strategy,
 			}
 
 			list = append(list, r)

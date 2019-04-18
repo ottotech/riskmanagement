@@ -1,11 +1,11 @@
 package listing
 
 type Risk struct {
-	ID           string
-	RiskMatrixID int
-	Name         string
-	Probability  int
-	Impact       int
-	Strategy     string
-	ResponsePlan string
+	ID             string
+	RiskMatrixID   int
+	Name           string
+	Probability    int
+	Impact         int
+	Classification string
+	Strategy       string
 }

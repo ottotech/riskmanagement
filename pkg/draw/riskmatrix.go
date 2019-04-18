@@ -49,7 +49,6 @@ func RiskMatrixDrawer(filename string, m listing.RiskMatrix) error {
 		if blockNbr == 1 {
 			r := image.Rect(0, 0, m.Multiple, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
-			addLabel(myImg, "Code Failure", m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+2, m.RiskLabelColor)
 		}
 		if blockNbr == 2 {
 			r := image.Rect(m.Multiple, 0, m.Multiple*2, m.Multiple)

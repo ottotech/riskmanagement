@@ -33,6 +33,7 @@ func main() {
 	mux.Handle("/", app.List.Handler(lister)) // home
 	mux.Handle("/add", app.Add.Handler(adder, lister))
 	mux.Handle("/get/", app.Get.Handler(lister))
+	mux.Handle("/add-risks", app.AddRisk.Handler(adder))
 	mux.Handle("/media/", app.Media.Handler())
 	server := http.Server{
 		Addr:    ":8080",
