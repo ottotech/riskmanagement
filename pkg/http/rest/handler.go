@@ -59,7 +59,7 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 		t := time.Now().Format("02_01_2006_03_04_05")
 		filename := fmt.Sprintf("%v.png", t)
 		rm := adding.RiskMatrix{Project: name, Path: filename}
-		a.AddRiskMatrix(rm)
+		_ = a.AddRiskMatrix(rm)
 		newRm, _ := l.GetRiskMatrixByPath(filename)
 		err := draw.RiskMatrixDrawer(filename, newRm)
 		if err != nil {
@@ -75,7 +75,7 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 type AddRisk struct {
 }
 
-func (h *AddRisk) Handler(a adding.Service) http.Handler {
+func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -84,6 +84,7 @@ func (h *AddRisk) Handler(a adding.Service) http.Handler {
 		// response will be json
 		w.Header().Set("Content-Type", "application/json")
 
+		// get all risks from request
 		var risks []adding.Risk
 		data := r.PostFormValue("data")
 		err := json.Unmarshal([]byte(data), &risks)
@@ -94,8 +95,21 @@ func (h *AddRisk) Handler(a adding.Service) http.Handler {
 			return
 		}
 
+		// remove risks that already exist
+		riskMatrixID := risks[0].RiskMatrixID
+		preexistingRisks := l.GetAllRisks(riskMatrixID)
+		for i := 0; i < len(risks); i++ {
+			for j := 0; j < len(preexistingRisks); j++ {
+				if risks[i].Name == preexistingRisks[j].Name {
+					risks[i] = risks[len(risks)-1]
+					risks = risks[:len(risks) -1]
+					i--
+				}
+			}
+		}
+
 		// adding risks
-		a.AddRisk(risks...)
+		_ = a.AddRisk(risks...)
 
 		// if all goes well we send a status 200
 		w.WriteHeader(http.StatusOK)

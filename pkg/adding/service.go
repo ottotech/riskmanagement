@@ -2,8 +2,8 @@ package adding
 
 // Service provides risk matrix and risk adding operations
 type Service interface {
-	AddRiskMatrix(...RiskMatrix)
-	AddRisk(...Risk)
+	AddRiskMatrix(...RiskMatrix) error
+	AddRisk(...Risk) error
 }
 
 // Repository provides access to RiskMatrix repository.
@@ -22,21 +22,23 @@ func NewService(r Repository) Service {
 }
 
 // AddRiskMatrix can add the give risk matrix to the database
-func (s *service) AddRiskMatrix(rm ...RiskMatrix) {
+func (s *service) AddRiskMatrix(rm ...RiskMatrix) error {
 
 	// Any validation can be done here
 
 	for _, matrix := range rm {
 		_ = s.rmR.AddRiskMatrix(matrix)
 	}
+	return nil
 }
 
 // AddRiskMatrix can add the give risk matrix to the database
-func (s *service) AddRisk(r ...Risk) {
+func (s *service) AddRisk(r ...Risk) error {
 
 	// Any validation can be done here
 
 	for _, risk := range r {
 		_ = s.rmR.AddRisk(risk)
 	}
+	return nil
 }
