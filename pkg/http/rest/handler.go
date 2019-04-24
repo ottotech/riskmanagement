@@ -18,12 +18,13 @@ import (
 )
 
 type App struct {
-	List       *List
-	Add        *Add
-	Get        *Get
-	Media      *Media
-	AddRisk    *AddRisk
-	DeleteRisk *DeleteRisk
+	List             *List
+	Add              *Add
+	Get              *Get
+	Media            *Media
+	AddRisk          *AddRisk
+	DeleteRisk       *DeleteRisk
+	DeleteRiskMatrix *DeleteRiskMatrix
 }
 
 type List struct {
@@ -74,6 +75,31 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 	})
 }
 
+type DeleteRiskMatrix struct {
+}
+
+func (h *DeleteRiskMatrix) Handler(d deleting.Service) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+
+		// response will be json
+		w.Header().Set("Content-Type", "application/json")
+
+		// get riskID from request
+		id, _ := strconv.Atoi(r.PostFormValue("risk_matrix_id"))
+
+		// delete the risk
+		_ = d.DeleteRiskMatrix(id)
+
+		// if all goes well we return response 200
+		w.WriteHeader(http.StatusOK)
+
+	})
+}
+
 type AddRisk struct {
 }
 
@@ -121,7 +147,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 type DeleteRisk struct {
 }
 
-func (h *DeleteRisk) Handler(s deleting.Service) http.Handler {
+func (h *DeleteRisk) Handler(d deleting.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// only allow POST method
 		if r.Method == http.MethodGet {
@@ -136,7 +162,7 @@ func (h *DeleteRisk) Handler(s deleting.Service) http.Handler {
 		id := r.PostFormValue("risk_id")
 
 		// delete the risk
-		_ = s.DeleteRisk(id)
+		_ = d.DeleteRisk(id)
 
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)

@@ -15,7 +15,7 @@
     {{if gt (len $RiskMatrixList) 0 }}
         <ul style="list-style: none;">
             {{range $RiskMatrixList}}
-                <li><a href="/get/{{.ID}}">{{.Project}}</a></li>
+                <li><a href="/get/{{.ID}}">{{.Project}}</a><a onclick="handleRiskMatrixDelete(event)" data-risk-matrix-id="{{.ID}}">delete</a></li>
             {{end}}
         </ul>
     {{else}}
@@ -25,5 +25,32 @@
     <a href="/add">Create new risk matrix?</a>
 </div>
 
+<script>
+    function handleRiskMatrixDelete(e) {
+        e.preventDefault();
+        let riskMatrixID = e.target.getAttribute("data-risk-matrix-id");
+
+        // make AJAX request
+        let xhr = new XMLHttpRequest();
+        let formData = new FormData();
+
+        // handle response
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === XMLHttpRequest.DONE){
+                if (xhr.status === 200){
+                    console.log("SUCCESS");
+                    window.location = "/"
+                }else {
+                    console.log("ERROR");
+                    console.log(xhr.responseText);
+                }
+            }
+        };
+
+        formData.append("risk_matrix_id", riskMatrixID);
+        xhr.open("POST", '/delete-risk-matrix');
+        xhr.send(formData);
+    }
+</script>
 </body>
 </html>

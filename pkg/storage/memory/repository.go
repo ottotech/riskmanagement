@@ -6,6 +6,8 @@ import (
 	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"image/color"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -215,4 +217,25 @@ func (m *Storage) DeleteRisk(riskID string) error {
 		}
 	}
 	return errors.New(fmt.Sprintf("risk not found by the give ID: %v.", riskID))
+}
+
+// DeleteMatrix deletes a risk matrix with the specified ID
+func (m *Storage) DeleteRiskMatrix(riskMatrixID int) error {
+	for i := range m.riskMatrixSlice {
+		if m.riskMatrixSlice[i].ID == riskMatrixID {
+			// we remove the RiskMatrix image
+			wd, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+			path := filepath.Join(wd, "media", m.riskMatrixSlice[i].Path)
+			_ = os.Remove(path)
+			// we remove the data of the matrix stored in memory
+			m.riskMatrixSlice[i] = m.riskMatrixSlice[len(m.riskMatrixSlice)-1]
+			m.riskMatrixSlice = m.riskMatrixSlice[:len(m.riskMatrixSlice)-1]
+			return nil
+		}
+	}
+	return errors.New(fmt.Sprintf("risk matrix not found by the give ID: %v.", riskMatrixID))
+
 }
