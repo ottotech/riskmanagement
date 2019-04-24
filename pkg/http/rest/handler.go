@@ -136,8 +136,20 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 			}
 		}
 
+		// if there are no new risks we send a response with status code 200
+		if len(risks) == 0 {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		// adding risks
 		_ = a.AddRisk(risks...)
+
+		// get risk matrix
+		riskMatrix, _ := l.GetRiskMatrix(riskMatrixID)
+
+		// draw risk matrix again
+		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix)
 
 		// if all goes well we send a status 200
 		w.WriteHeader(http.StatusOK)

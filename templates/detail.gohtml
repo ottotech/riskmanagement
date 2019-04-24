@@ -53,11 +53,11 @@
         {{if gt (len $Risks) 0 }}
             {{range $Risks}}
                 <tr>
-                    <td><input value="{{.Name}}"></td>
-                    <td><input value="{{.Probability}}"></td>
-                    <td><input value="{{.Impact}}"></td>
-                    <td><input value="{{.Classification}}"></td>
-                    <td><input value="{{.Strategy}}"></td>
+                    <td><input disabled value="{{.Name}}"></td>
+                    <td><input disabled value="{{.Probability}}"></td>
+                    <td><input disabled value="{{.Impact}}"></td>
+                    <td><input disabled value="{{.Classification}}"></td>
+                    <td><input disabled value="{{.Strategy}}"></td>
                     <td><a onclick="handleRiskDelete(event)" data-risk-id="{{.ID}}">delete</a></td>
                 </tr>
             {{end}}
@@ -77,7 +77,7 @@
         let cell3 = newRow.insertCell(2);
         let cell4 = newRow.insertCell(3);
         let cell5 = newRow.insertCell(4);
-        let list = [cell1, cell2, cell3, cell4, cell5];
+        let list = [cell1, cell2, cell3, cell5];
         // append input into cells
         for (let i = 0; i < list.length; i++) {
             // create input element
@@ -87,6 +87,16 @@
             // append input into cell
             list[i].appendChild(input);
         }
+
+        // in cell4 we will use a custom select element
+        const opts = ["high", "medium", "low"];
+        let optStr = "";
+        opts.forEach(function (opt) {
+            optStr += `<option value="${opt}">${opt}</option>`;
+        });
+        let mySelect = document.createElement("select");
+        mySelect.innerHTML = optStr;
+        cell4.appendChild(mySelect);
 
         // in cell6 we will add a custom msg
         let cell6 = newRow.insertCell(5);
@@ -142,7 +152,7 @@
                 if (xhr.status === 200){
                     console.log("SUCCESS");
                     window.location = "/get/" + riskMatrixID
-                }else if (xhr.status === 500) {
+                }else {
                     console.log("ERROR");
                     console.log(xhr.responseText);
                 }
