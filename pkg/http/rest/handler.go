@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ottotech/riskmanagement/pkg/adding"
+	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/draw"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"github.com/ottotech/riskmanagement/pkg/utils"
@@ -17,11 +18,12 @@ import (
 )
 
 type App struct {
-	List    *List
-	Add     *Add
-	Get     *Get
-	Media   *Media
-	AddRisk *AddRisk
+	List       *List
+	Add        *Add
+	Get        *Get
+	Media      *Media
+	AddRisk    *AddRisk
+	DeleteRisk *DeleteRisk
 }
 
 type List struct {
@@ -102,7 +104,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 			for j := 0; j < len(preexistingRisks); j++ {
 				if risks[i].Name == preexistingRisks[j].Name {
 					risks[i] = risks[len(risks)-1]
-					risks = risks[:len(risks) -1]
+					risks = risks[:len(risks)-1]
 					i--
 				}
 			}
@@ -112,6 +114,31 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 		_ = a.AddRisk(risks...)
 
 		// if all goes well we send a status 200
+		w.WriteHeader(http.StatusOK)
+	})
+}
+
+type DeleteRisk struct {
+}
+
+func (h *DeleteRisk) Handler(s deleting.Service) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// only allow POST method
+		if r.Method == http.MethodGet {
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+
+		// response will be json
+		w.Header().Set("Content-Type", "application/json")
+
+		// get riskID from request
+		id := r.PostFormValue("risk_id")
+
+		// delete the risk
+		_ = s.DeleteRisk(id)
+
+		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
 	})
 }
@@ -149,7 +176,7 @@ func (h *Get) Handler(s listing.Service) http.Handler {
 			// build context
 			ctx := struct {
 				RiskMatrix listing.RiskMatrix
-				Risks []listing.Risk
+				Risks      []listing.Risk
 			}{
 				riskMatrix,
 				risks,

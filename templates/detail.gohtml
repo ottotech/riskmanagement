@@ -48,6 +48,7 @@
             <th>Impact</th>
             <th>Risk Classification</th>
             <th>Risk Response Plan</th>
+            <th>Action</th>
         </tr>
         {{if gt (len $Risks) 0 }}
             {{range $Risks}}
@@ -57,6 +58,7 @@
                     <td><input value="{{.Impact}}"></td>
                     <td><input value="{{.Classification}}"></td>
                     <td><input value="{{.Strategy}}"></td>
+                    <td><a onclick="handleRiskDelete(event)" data-risk-id="{{.ID}}">delete</a></td>
                 </tr>
             {{end}}
         {{end}}
@@ -85,6 +87,12 @@
             // append input into cell
             list[i].appendChild(input);
         }
+
+        // in cell6 we will add a custom msg
+        let cell6 = newRow.insertCell(5);
+        cell6.innerText = "save & refresh if you want to see the delete option";
+
+
         // after expanding the table we go to the end of page.
         // We might want to change this behavior when improving the UI.
         window.scrollTo(0,document.body.scrollHeight);
@@ -142,6 +150,33 @@
 
         formData.append("data", JSON.stringify(list));
         xhr.open("POST", '/add-risks');
+        xhr.send(formData);
+    }
+
+    function handleRiskDelete(e) {
+        e.preventDefault();
+        let riskID = e.target.getAttribute("data-risk-id");
+
+        // make AJAX request
+        let xhr = new XMLHttpRequest();
+        let formData = new FormData();
+
+        // handle response
+        xhr.onreadystatechange = function () {
+            if(xhr.readyState === XMLHttpRequest.DONE){
+                if (xhr.status === 200){
+                    console.log("SUCCESS");
+                    let riskMatrixID = document.getElementById("js_risk_matrix_id").value;
+                    window.location = "/get/" + riskMatrixID
+                }else {
+                    console.log("ERROR");
+                    console.log(xhr.responseText);
+                }
+            }
+        };
+
+        formData.append("risk_id", riskID);
+        xhr.open("POST", '/delete-risks');
         xhr.send(formData);
     }
 </script>

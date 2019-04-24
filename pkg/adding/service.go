@@ -21,7 +21,7 @@ func NewService(r Repository) Service {
 	return &service{r}
 }
 
-// AddRiskMatrix can add the give risk matrix to the database
+// AddRiskMatrix can add the given risk matrix to the database
 func (s *service) AddRiskMatrix(rm ...RiskMatrix) error {
 
 	// Any validation can be done here
@@ -32,7 +32,7 @@ func (s *service) AddRiskMatrix(rm ...RiskMatrix) error {
 	return nil
 }
 
-// AddRiskMatrix can add the give risk matrix to the database
+// AddRiskMatrix can add the given risk matrix to the database
 func (s *service) AddRisk(r ...Risk) error {
 
 	// Any validation can be done here

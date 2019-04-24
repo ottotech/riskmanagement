@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-func init()  {
+func init() {
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)

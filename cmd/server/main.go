@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ottotech/riskmanagement/pkg/adding"
+	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/http/rest"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"github.com/ottotech/riskmanagement/pkg/storage/memory"
@@ -19,12 +20,14 @@ func main() {
 
 	var adder adding.Service
 	var lister listing.Service
+	var deleter deleting.Service
 
 	switch storageType {
 	case Memory:
 		s := new(memory.Storage)
 		adder = adding.NewService(s)
 		lister = listing.NewService(s)
+		deleter = deleting.NewService(s)
 		// more data stores can be supported
 	}
 
@@ -34,6 +37,7 @@ func main() {
 	mux.Handle("/add", app.Add.Handler(adder, lister))
 	mux.Handle("/get/", app.Get.Handler(lister))
 	mux.Handle("/add-risks", app.AddRisk.Handler(adder, lister))
+	mux.Handle("/delete-risks", app.DeleteRisk.Handler(deleter))
 	mux.Handle("/media/", app.Media.Handler())
 	server := http.Server{
 		Addr:    ":8080",

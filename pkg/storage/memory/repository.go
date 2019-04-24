@@ -204,3 +204,15 @@ func (m *Storage) GetAllRisks(riskMatrixID int) []listing.Risk {
 	}
 	return list
 }
+
+// DeleteRisk deletes a risk with the specified ID
+func (m *Storage) DeleteRisk(riskID string) error {
+	for i := range m.risks {
+		if m.risks[i].ID == riskID {
+			m.risks[i] = m.risks[len(m.risks)-1]
+			m.risks = m.risks[:len(m.risks)-1]
+			return nil
+		}
+	}
+	return errors.New(fmt.Sprintf("risk not found by the give ID: %v.", riskID))
+}
