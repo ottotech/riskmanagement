@@ -21,7 +21,7 @@ func NewService(r Repository) Service {
 	return &service{r}
 }
 
-// DeleteRisk deletes the risk with specified ID
+// DeleteRisk deletes the risk with the specified ID
 func (s *service) DeleteRisk(riskIDs ...string) error {
 	for _, id := range riskIDs {
 		_ = s.r.DeleteRisk(id)
