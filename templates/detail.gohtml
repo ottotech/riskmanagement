@@ -141,6 +141,7 @@
             if(xhr.readyState === XMLHttpRequest.DONE){
                 if (xhr.status === 200){
                     console.log("SUCCESS");
+                    window.location = "/get/" + riskMatrixID
                 }else if (xhr.status === 500) {
                     console.log("ERROR");
                     console.log(xhr.responseText);
