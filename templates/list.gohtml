@@ -15,7 +15,7 @@
     {{if gt (len $RiskMatrixList) 0 }}
         <ul style="list-style: none;">
             {{range $RiskMatrixList}}
-                <li><a href="/get/{{.ID}}">{{.Project}}</a><a onclick="handleRiskMatrixDelete(event)" data-risk-matrix-id="{{.ID}}">delete</a></li>
+                <li><a href="/get/{{.ID}}">{{.Project}}</a> <a href="#" onclick="handleRiskMatrixDelete(event)" data-risk-matrix-id="{{.ID}}">delete</a></li>
             {{end}}
         </ul>
     {{else}}
