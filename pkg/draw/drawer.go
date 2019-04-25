@@ -147,7 +147,7 @@ func RiskMatrixDrawer(filename string, m listing.RiskMatrix, risks []adding.Risk
 			}
 		}
 	}
-
+	// draw borders
 	drawRiskMatrixBorders(myImg, m)
 
 	// create image
