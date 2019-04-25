@@ -2,6 +2,7 @@ package draw
 
 import (
 	"errors"
+	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -15,7 +16,7 @@ import (
 	"path/filepath"
 )
 
-func RiskMatrixDrawer(filename string, m listing.RiskMatrix) error {
+func RiskMatrixDrawer(filename string, m listing.RiskMatrix, risks []adding.Risk) error {
 	myImg := image.NewRGBA(image.Rect(0, 0, m.MatImgWidth, m.MatImgHeight))
 	wd, err := os.Getwd()
 	if err != nil {
@@ -49,6 +50,11 @@ func RiskMatrixDrawer(filename string, m listing.RiskMatrix) error {
 		if blockNbr == 1 {
 			r := image.Rect(0, 0, m.Multiple, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			for _, r := range risks {
+				if r.Probability == 3 && r.Impact == 1 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+2, m.RiskLabelColor)
+				}
+			}
 		}
 		if blockNbr == 2 {
 			r := image.Rect(m.Multiple, 0, m.Multiple*2, m.Multiple)

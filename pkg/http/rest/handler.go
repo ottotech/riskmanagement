@@ -64,7 +64,7 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 		rm := adding.RiskMatrix{Project: name, Path: filename}
 		_ = a.AddRiskMatrix(rm)
 		newRm, _ := l.GetRiskMatrixByPath(filename)
-		err := draw.RiskMatrixDrawer(filename, newRm)
+		err := draw.RiskMatrixDrawer(filename, newRm, []adding.Risk{})
 		if err != nil {
 			utils.RenderTemplate(w, "add.gohtml", err.Error())
 			return
@@ -148,8 +148,8 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 		// get risk matrix
 		riskMatrix, _ := l.GetRiskMatrix(riskMatrixID)
 
-		// draw risk matrix again
-		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix)
+		// draw risk matrix again in order to add the new risks
+		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
 
 		// if all goes well we send a status 200
 		w.WriteHeader(http.StatusOK)
