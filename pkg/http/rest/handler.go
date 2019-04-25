@@ -173,7 +173,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 type DeleteRisk struct {
 }
 
-func (h *DeleteRisk) Handler(d deleting.Service) http.Handler {
+func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// only allow POST method
 		if r.Method == http.MethodGet {
@@ -187,8 +187,31 @@ func (h *DeleteRisk) Handler(d deleting.Service) http.Handler {
 		// get riskID from request
 		id := r.PostFormValue("risk_id")
 
+		// we get the risk instance before deleting it to use it later
+		risk, _ := l.GetRisk(id)
+
 		// delete the risk
 		_ = d.DeleteRisk(id)
+
+		// get riskMatrix of the deleted risk
+		riskMatrix, _ := l.GetRiskMatrix(risk.RiskMatrixID)
+
+		// get all risks of the matrix
+		var risks []adding.Risk
+		for _, risk := range l.GetAllRisks(riskMatrix.ID) {
+			r := adding.Risk{
+				RiskMatrixID:   riskMatrix.ID,
+				Name:           risk.Name,
+				Probability:    risk.Probability,
+				Impact:         risk.Impact,
+				Classification: risk.Classification,
+				Strategy:       risk.Strategy,
+			}
+			risks = append(risks, r)
+		}
+
+		// draw risk matrix again in order to not show the deleted risks
+		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
 
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)

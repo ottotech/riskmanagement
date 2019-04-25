@@ -5,6 +5,7 @@ type Service interface {
 	GetRiskMatrix(int) (RiskMatrix, error)
 	GetRiskMatrixByPath(string) (RiskMatrix, error)
 	GetAllRisks(int) []Risk
+	GetRisk(string) (Risk, error)
 	GetAllRiskMatrix() []RiskMatrix
 }
 
@@ -17,6 +18,8 @@ type Repository interface {
 	GetAllRiskMatrix() []RiskMatrix
 	// GetAllRisks returns a list of all risks for a given RiskMatrix ID
 	GetAllRisks(int) []Risk
+	// GetRisk returns a risk with the given ID
+	GetRisk(string) (Risk, error)
 }
 
 type service struct {
@@ -46,4 +49,9 @@ func (s *service) GetAllRiskMatrix() []RiskMatrix {
 // GetAllRisks returns all risks specified in a RiskMatrix
 func (s *service) GetAllRisks(riskMatrixID int) []Risk {
 	return s.r.GetAllRisks(riskMatrixID)
+}
+
+// GetRisk returns a risk with the given ID
+func (s *service) GetRisk(riskID string) (Risk, error) {
+	return s.r.GetRisk(riskID)
 }

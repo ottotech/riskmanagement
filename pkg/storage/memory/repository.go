@@ -207,6 +207,25 @@ func (m *Storage) GetAllRisks(riskMatrixID int) []listing.Risk {
 	return list
 }
 
+// GetRisk returns a risk with the given ID
+func (m *Storage) GetRisk(riskID string) (listing.Risk, error) {
+	for i := range m.risks {
+		if m.risks[i].ID == riskID {
+			r := listing.Risk{
+				ID:             m.risks[i].ID,
+				RiskMatrixID:   m.risks[i].RiskMatrixID,
+				Name:           m.risks[i].Name,
+				Probability:    m.risks[i].Probability,
+				Impact:         m.risks[i].Impact,
+				Classification: m.risks[i].Classification,
+				Strategy:       m.risks[i].Strategy,
+			}
+			return r, nil
+		}
+	}
+	return listing.Risk{}, errors.New(fmt.Sprintf("risk not found by the given ID: %v.", riskID))
+}
+
 // DeleteRisk deletes a risk with the specified ID
 func (m *Storage) DeleteRisk(riskID string) error {
 	for i := range m.risks {
@@ -216,7 +235,7 @@ func (m *Storage) DeleteRisk(riskID string) error {
 			return nil
 		}
 	}
-	return errors.New(fmt.Sprintf("risk not found by the give ID: %v.", riskID))
+	return errors.New(fmt.Sprintf("risk not found by the given ID: %v.", riskID))
 }
 
 // DeleteMatrix deletes a risk matrix with the specified ID
