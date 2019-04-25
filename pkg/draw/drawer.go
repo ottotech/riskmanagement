@@ -50,45 +50,101 @@ func RiskMatrixDrawer(filename string, m listing.RiskMatrix, risks []adding.Risk
 		if blockNbr == 1 {
 			r := image.Rect(0, 0, m.Multiple, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
-			wordSpacer := 2
+			lineSpacing := 2
 			for _, r := range risks {
 				if r.Probability == 3 && r.Impact == 1 {
-					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+wordSpacer, m.BorderWidth+m.WordHeight+wordSpacer, m.RiskLabelColor)
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
 				}
-				wordSpacer += 2
+				lineSpacing += 15
 			}
 		}
 		if blockNbr == 2 {
 			r := image.Rect(m.Multiple, 0, m.Multiple*2, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 3 && r.Impact == 2 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+wordSpacer, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 3 {
 			r := image.Rect(m.Multiple*2, 0, m.Multiple*3, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 3 && r.Impact == 3 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 4 {
 			r := image.Rect(0, m.Multiple, m.Multiple, m.Multiple*2)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 2 && r.Impact == 1 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 5 {
 			r := image.Rect(m.Multiple, m.Multiple, m.Multiple*2, m.Multiple*2)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 2 && r.Impact == 2 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 6 {
 			r := image.Rect(m.Multiple*2, m.Multiple, m.Multiple*3, m.Multiple*2)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 2 && r.Impact == 3 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 7 {
 			r := image.Rect(0, m.Multiple*2, m.Multiple, m.Multiple*3)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 1 && r.Impact == 1 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 8 {
 			r := image.Rect(m.Multiple, m.Multiple*2, m.Multiple*2, m.Multiple*3)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 1 && r.Impact == 2 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 		if blockNbr == 9 {
 			r := image.Rect(m.Multiple*2, m.Multiple*2, m.Multiple*3, m.Multiple*3)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			lineSpacing := 2
+			for _, r := range risks {
+				if r.Probability == 1 && r.Impact == 3 {
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
+				}
+				lineSpacing += 15
+			}
 		}
 	}
 
