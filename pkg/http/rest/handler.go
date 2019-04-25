@@ -134,27 +134,30 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 			return
 		}
 
-		// remove risks that already exist
+		// classify new risks
+		var newRisks []adding.Risk
 		riskMatrixID := risks[0].RiskMatrixID
 		preexistingRisks := l.GetAllRisks(riskMatrixID)
-		for i := 0; i < len(risks); i++ {
-			for j := 0; j < len(preexistingRisks); j++ {
-				if risks[i].Name == preexistingRisks[j].Name {
-					risks[i] = risks[len(risks)-1]
-					risks = risks[:len(risks)-1]
-					i--
+		for _, r := range risks {
+			exists := false
+			for _, pr := range preexistingRisks {
+				if r.Name == pr.Name {
+					exists = true
 				}
+			}
+			if !exists {
+				newRisks = append(newRisks, r)
 			}
 		}
 
 		// if there are no new risks we send a response with status code 200
-		if len(risks) == 0 {
+		if len(newRisks) == 0 {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
 
 		// adding risks
-		_ = a.AddRisk(risks...)
+		_ = a.AddRisk(newRisks...)
 
 		// get risk matrix
 		riskMatrix, _ := l.GetRiskMatrix(riskMatrixID)
