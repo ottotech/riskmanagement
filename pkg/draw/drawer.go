@@ -50,10 +50,12 @@ func RiskMatrixDrawer(filename string, m listing.RiskMatrix, risks []adding.Risk
 		if blockNbr == 1 {
 			r := image.Rect(0, 0, m.Multiple, m.Multiple)
 			draw.Draw(myImg, r, &image.Uniform{C: riskColor(blockNbr)}, image.ZP, draw.Src)
+			wordSpacer := 2
 			for _, r := range risks {
 				if r.Probability == 3 && r.Impact == 1 {
-					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+2, m.RiskLabelColor)
+					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+wordSpacer, m.BorderWidth+m.WordHeight+wordSpacer, m.RiskLabelColor)
 				}
+				wordSpacer += 2
 			}
 		}
 		if blockNbr == 2 {

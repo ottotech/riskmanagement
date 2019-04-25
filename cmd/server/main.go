@@ -38,7 +38,7 @@ func main() {
 	mux.Handle("/get/", app.Get.Handler(lister))
 	mux.Handle("/add-risks", app.AddRisk.Handler(adder, lister))
 	mux.Handle("/delete-risks", app.DeleteRisk.Handler(deleter))
-	mux.Handle("/delete-risk-matrix", app.DeleteRiskMatrix.Handler(deleter))
+	mux.Handle("/delete-risk-matrix", app.DeleteRiskMatrix.Handler(deleter, lister))
 	mux.Handle("/media/", app.Media.Handler())
 	server := http.Server{
 		Addr:    ":8080",

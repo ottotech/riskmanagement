@@ -78,7 +78,7 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 type DeleteRiskMatrix struct {
 }
 
-func (h *DeleteRiskMatrix) Handler(d deleting.Service) http.Handler {
+func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -91,8 +91,19 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service) http.Handler {
 		// get riskID from request
 		id, _ := strconv.Atoi(r.PostFormValue("risk_matrix_id"))
 
-		// delete the risk
+		// before deleting the matrix, let's instantiate it
+		riskMatrix, _ := l.GetRiskMatrix(id)
+
+		// delete the risk matrix
 		_ = d.DeleteRiskMatrix(id)
+
+		// delete all risks from matrix
+		risks := l.GetAllRisks(riskMatrix.ID)
+		risksIDs := make([]string, 0)
+		for _, r := range risks {
+			risksIDs = append(risksIDs, r.ID)
+		}
+		_ = d.DeleteRisk(risksIDs...)
 
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
