@@ -172,7 +172,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 			if !ok {
 				w.WriteHeader(http.StatusForbidden)
 				msg := fmt.Sprintf("Probability and impact numbers should be a number between 1 and 0 on risk %v", r.Name)
-				_, _ = w.Write([]byte(msg))  // ignoring error simplicity
+				_, _ = w.Write([]byte(msg))  // ignoring error for simplicity
 				return
 			}
 			risks[i].Classification = c
