@@ -54,7 +54,7 @@ func RiskMatrixDrawer(filename string, m listing.RiskMatrix, risks []adding.Risk
 			for _, r := range risks {
 				if r.Probability == 3 && r.Impact == 1 {
 					addLabel(myImg, r.Name, m.BorderWidth+m.WordHeight+2, m.BorderWidth+m.WordHeight+lineSpacing, m.RiskLabelColor)
-					lineSpacing += 15
+					lineSpacing += 15 // word height 13 + 2 pixels of spacing
 				}
 			}
 		}

@@ -172,7 +172,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 			if !ok {
 				w.WriteHeader(http.StatusForbidden)
 				msg := fmt.Sprintf("Probability and impact numbers should be a number between 1 and 0 on risk %v", r.Name)
-				_, _ = w.Write([]byte(msg))  // ignoring error for simplicity
+				_, _ = w.Write([]byte(msg)) // ignoring error for simplicity
 				return
 			}
 			risks[i].Classification = c
@@ -206,13 +206,12 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 		// get risk matrix
 		riskMatrix, _ := l.GetRiskMatrix(riskMatrixID)
 
-		// resize risk matrix if necessary based on number of risks in blocks.
 		// this anonymous func will count how many risks are per block in the risk matrix.
 		// then it will get the number of risks from the block that has the most number of risks.
 		// finally based on this max number this func will resize the matrix in order to show the
 		// risks accordingly.
 		riskMatrixResize := func(rm listing.RiskMatrix, r []adding.Risk) {
-			var rb1, rb2, rb3, rb4, rb5, rb6, rb7, rb8, rb9 int  // rb = risk matrix block
+			var rb1, rb2, rb3, rb4, rb5, rb6, rb7, rb8, rb9 int // rb = risk matrix block
 			for _, r := range risks {
 				if r.Probability == 3 && r.Impact == 1 {
 					rb1 += 1
@@ -248,8 +247,39 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 					max = v
 				}
 			}
+			// block size:   200
+			// border width: 3*2 (top and bottom)
+			// word height:  13
+			// line spacing: word height + 2
+			blockWritableSize := 200 - 30 // block size - border width * 2
+			actualSize := 0
+			for i := 1; i < max; i++ {
+				actualSize += 15
+			}
+			// if the size required is greater than the block writable size
+			// we need to find the right size where the risks can fit.
+			// note that the size of the blocks should be a reminder of a number
+			// that is a multiple of 3 because the risk matrix has 3 rows and 3 columns
+			if actualSize > blockWritableSize {
+				actualSize = actualSize + 30
+				newBlockWidth := 0
+				multiple := riskMatrix.Multiple
+				for {
+					x := multiple + (3 - multiple%3)
+					if x > actualSize {
+						newBlockWidth = x
+						break
+					}
+					multiple = x
+				}
+				newImgWidth := newBlockWidth * 3
+				riskMatrix.MatImgWidth = newImgWidth
+				riskMatrix.MatImgHeight = newImgWidth
+				riskMatrix.Multiple = newImgWidth / riskMatrix.MatNrCols
+			}
 		}
 
+		// resize risk matrix image if necessary
 		riskMatrixResize(riskMatrix, risks)
 
 		// draw risk matrix again in order to add the new risks

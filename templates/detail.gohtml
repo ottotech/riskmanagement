@@ -32,7 +32,7 @@
 {{$Risks := .Risks}} <!-- Cool stuff -->
 <div class="centered">
     <h2>RISK MATRIX DETAIL</h2>
-    <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="600" height="600">
+    <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="{{$RiskMatrix.MatImgWidth}}" height="{{$RiskMatrix.MatImgHeight}}">
     <h3>Project name:</h3>
     <p>{{$RiskMatrix.Project}}</p>
     <br>
