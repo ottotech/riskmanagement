@@ -206,6 +206,52 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 		// get risk matrix
 		riskMatrix, _ := l.GetRiskMatrix(riskMatrixID)
 
+		// resize risk matrix if necessary based on number of risks in blocks.
+		// this anonymous func will count how many risks are per block in the risk matrix.
+		// then it will get the number of risks from the block that has the most number of risks.
+		// finally based on this max number this func will resize the matrix in order to show the
+		// risks accordingly.
+		riskMatrixResize := func(rm listing.RiskMatrix, r []adding.Risk) {
+			var rb1, rb2, rb3, rb4, rb5, rb6, rb7, rb8, rb9 int  // rb = risk matrix block
+			for _, r := range risks {
+				if r.Probability == 3 && r.Impact == 1 {
+					rb1 += 1
+				}
+				if r.Probability == 3 && r.Impact == 2 {
+					rb2 += 1
+				}
+				if r.Probability == 3 && r.Impact == 3 {
+					rb3 += 1
+				}
+				if r.Probability == 2 && r.Impact == 1 {
+					rb4 += 1
+				}
+				if r.Probability == 2 && r.Impact == 2 {
+					rb5 += 1
+				}
+				if r.Probability == 2 && r.Impact == 3 {
+					rb6 += 1
+				}
+				if r.Probability == 1 && r.Impact == 1 {
+					rb7 += 1
+				}
+				if r.Probability == 1 && r.Impact == 2 {
+					rb8 += 1
+				}
+				if r.Probability == 1 && r.Impact == 3 {
+					rb9 += 1
+				}
+			}
+			var max int
+			for _, v := range []int{rb1, rb2, rb3, rb4, rb5, rb6, rb7, rb8, rb9} {
+				if v > max {
+					max = v
+				}
+			}
+		}
+
+		riskMatrixResize(riskMatrix, risks)
+
 		// draw risk matrix again in order to add the new risks
 		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
 
