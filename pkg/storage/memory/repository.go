@@ -75,7 +75,7 @@ func (m *Storage) UpdateRiskMatrixSize(riskMatrixID, newImageWidth int ) error {
 			return nil
 		}
 	}
-	return errors.New("risk matrix not found")
+	return errors.New(fmt.Sprintf("risk matrix not found with ID: %v", riskMatrixID))
 }
 
 // AddRisk saves the given risk in the repository
