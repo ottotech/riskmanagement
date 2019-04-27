@@ -125,13 +125,57 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 
 		// get all risks from request
 		var risks []adding.Risk
-		data := r.PostFormValue("data")
-		err := json.Unmarshal([]byte(data), &risks)
+		postData := r.PostFormValue("data")
+		err := json.Unmarshal([]byte(postData), &risks)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(err.Error()))
 			return
+		}
+
+		// anonymous func that returns the risk classification
+		riskClassifier := func(r adding.Risk) (string, bool) {
+			if r.Probability == 3 && r.Impact == 1 {
+				return "medium", true
+			}
+			if r.Probability == 3 && r.Impact == 2 {
+				return "high", true
+			}
+			if r.Probability == 3 && r.Impact == 3 {
+				return "high", true
+			}
+			if r.Probability == 2 && r.Impact == 1 {
+				return "low", true
+			}
+			if r.Probability == 2 && r.Impact == 2 {
+				return "medium", true
+			}
+			if r.Probability == 2 && r.Impact == 3 {
+				return "high", true
+			}
+			if r.Probability == 1 && r.Impact == 1 {
+				return "low", true
+			}
+			if r.Probability == 1 && r.Impact == 2 {
+				return "low", true
+			}
+			if r.Probability == 1 && r.Impact == 3 {
+				return "medium", true
+			}
+			return "", false
+		}
+
+		// we need to set the risk classification for each risk
+		for i, r := range risks {
+			c, ok := riskClassifier(r)
+			if !ok {
+				w.WriteHeader(http.StatusForbidden)
+				msg := fmt.Sprintf("Probability and impact numbers should be a number between 1 and 0 on risk %v", r.Name)
+				_, _ = w.Write([]byte(msg))  // ignoring error simplicity
+				return
+			}
+			risks[i].Classification = c
 		}
 
 		// classify new risks

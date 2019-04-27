@@ -33,6 +33,7 @@
 <div class="centered">
     <h2>RISK MATRIX DETAIL</h2>
     <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="600" height="600">
+    <h3>Project name:</h3>
     <p>{{$RiskMatrix.Project}}</p>
     <br>
     <a href="/">Return</a>
@@ -77,26 +78,20 @@
         let cell3 = newRow.insertCell(2);
         let cell4 = newRow.insertCell(3);
         let cell5 = newRow.insertCell(4);
-        let list = [cell1, cell2, cell3, cell5];
+        let list = [cell1, cell2, cell3, cell4, cell5];
         // append input into cells
         for (let i = 0; i < list.length; i++) {
             // create input element
             let input = document.createElement("INPUT");
             // define input type
             input.type = "text";
+            // on cell4 (risk classification) we disable the cell
+            if (i === 3) {
+                input.disabled = true;
+            }
             // append input into cell
             list[i].appendChild(input);
         }
-
-        // in cell4 we will use a custom select element
-        const opts = ["high", "medium", "low"];
-        let optStr = "";
-        opts.forEach(function (opt) {
-            optStr += `<option value="${opt}">${opt}</option>`;
-        });
-        let mySelect = document.createElement("select");
-        mySelect.innerHTML = optStr;
-        cell4.appendChild(mySelect);
 
         // in cell6 we will add a custom msg
         let cell6 = newRow.insertCell(5);
@@ -152,7 +147,9 @@
                 if (xhr.status === 200){
                     console.log("SUCCESS");
                     window.location = "/get/" + riskMatrixID
-                }else {
+                } else if (xhr.status === 403) {
+                    alert(xhr.responseText);
+                } else {
                     console.log("ERROR");
                     console.log(xhr.responseText);
                 }
