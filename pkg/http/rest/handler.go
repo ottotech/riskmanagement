@@ -7,6 +7,7 @@ import (
 	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/draw"
 	"github.com/ottotech/riskmanagement/pkg/listing"
+	"github.com/ottotech/riskmanagement/pkg/updating"
 	"github.com/ottotech/riskmanagement/pkg/utils"
 	"log"
 	"net/http"
@@ -114,7 +115,7 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 type AddRisk struct {
 }
 
-func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
+func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -276,6 +277,14 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service) http.Handler {
 				riskMatrix.MatImgWidth = newImgWidth
 				riskMatrix.MatImgHeight = newImgWidth
 				riskMatrix.Multiple = newImgWidth / riskMatrix.MatNrCols
+
+				// finally we need to update the risk matrix sizes in the storage
+				err := u.UpdateRiskMatrixSize(riskMatrixID, newImgWidth)
+				if err != nil {
+					w.WriteHeader(http.StatusForbidden)
+					_, _ = w.Write([]byte(err.Error()))
+					return
+				}
 			}
 		}
 

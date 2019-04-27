@@ -65,7 +65,20 @@ func (m *Storage) AddRiskMatrix(rm adding.RiskMatrix) error {
 	return nil
 }
 
-// Add saves the given risk in the repository
+// UpdateRiskMatrixSize updates the risk matrix size of a given risk matrix in the repository
+func (m *Storage) UpdateRiskMatrixSize(riskMatrixID, newImageWidth int ) error {
+	for i := range m.riskMatrixSlice {
+		if m.riskMatrixSlice[i].ID == riskMatrixID {
+			m.riskMatrixSlice[i].MatImgWidth = newImageWidth
+			m.riskMatrixSlice[i].MatImgHeight = newImageWidth
+			m.riskMatrixSlice[i].Multiple = newImageWidth / m.riskMatrixSlice[i].MatNrCols
+			return nil
+		}
+	}
+	return errors.New("risk matrix not found")
+}
+
+// AddRisk saves the given risk in the repository
 func (m *Storage) AddRisk(r adding.Risk) error {
 	found := false
 	for rm := range m.riskMatrixSlice {
