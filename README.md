@@ -7,7 +7,7 @@ GO built-in server you will lose all the data; however, if you decide to use the
 different storage, like a sequel database. Also, every time you stop the GO built-in server you will not only lose the 
 data, but the risk matrix images will be removed from disk as well—so keep in mind this, if you want to remove this 
 behavior just delete the *init()* func from the *delete.go* file in the *config* pkg. The design pattern I used to 
-create this app is DDD. So it is easy to change things in the app (pug-and-play style) so you can improve or expand the
+create this app is DDD. So it is easy to change things in the app (plug-and-play style) so you can improve or expand the
 scope of the app. 
 
 **NOTE:**
