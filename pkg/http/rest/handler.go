@@ -248,7 +248,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 			// border width: 3*2 (top and bottom)
 			// word height:  13
 			// line spacing: word height + 2
-			blockWritableSize := 200 - 30  // 30 is a dummy value to add more space while adding risk labels on image
+			blockWritableSize := 200 - 30 // 30 is a dummy value to add more space while adding risk labels on image
 			actualSize := 0
 			for i := 1; i < max; i++ {
 				actualSize += 15
@@ -258,7 +258,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 			// note that the size of the blocks should be a reminder of a number
 			// that is a multiple of 3 because the risk matrix has 3 rows and 3 columns
 			if actualSize > blockWritableSize {
-				actualSize = actualSize + 30  // 30 is a dummy value to add more space while adding risk labels on image
+				actualSize = actualSize + 30 // 30 is a dummy value to add more space while adding risk labels on image
 				newBlockWidth := 0
 				multiple := riskMatrix.Multiple
 				for {
@@ -278,7 +278,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 				err := u.UpdateRiskMatrixSize(riskMatrixID, newImgWidth)
 				if err != nil {
 					w.WriteHeader(http.StatusForbidden)
-					_, _ = w.Write([]byte(fmt.Sprintf("While updating the size of the risk " +
+					_, _ = w.Write([]byte(fmt.Sprintf("While updating the size of the risk "+
 						"matrix we encounter this err: %v", err.Error())))
 					return
 				}

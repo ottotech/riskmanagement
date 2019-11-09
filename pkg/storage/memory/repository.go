@@ -66,7 +66,7 @@ func (m *Storage) AddRiskMatrix(rm adding.RiskMatrix) error {
 }
 
 // UpdateRiskMatrixSize updates the risk matrix size of a given risk matrix in the repository
-func (m *Storage) UpdateRiskMatrixSize(riskMatrixID, newImageWidth int ) error {
+func (m *Storage) UpdateRiskMatrixSize(riskMatrixID, newImageWidth int) error {
 	for i := range m.riskMatrixSlice {
 		if m.riskMatrixSlice[i].ID == riskMatrixID {
 			m.riskMatrixSlice[i].MatImgWidth = newImageWidth
