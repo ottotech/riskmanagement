@@ -37,7 +37,6 @@ func (h *List) Handler(s listing.Service) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
-
 		list := s.GetAllRiskMatrix()
 		utils.RenderTemplate(w, "list.gohtml", list)
 		return
@@ -53,13 +52,11 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 			utils.RenderTemplate(w, "add.gohtml", nil)
 			return
 		}
-
 		name := r.PostFormValue("project")
 		if name == "" {
 			utils.RenderTemplate(w, "add.gohtml", "Error: You need to specify the project name.")
 			return
 		}
-
 		t := time.Now().Format("02_01_2006_03_04_05")
 		filename := fmt.Sprintf("%v.png", t)
 		rm := adding.RiskMatrix{Project: name, Path: filename}
@@ -70,7 +67,6 @@ func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
 			utils.RenderTemplate(w, "add.gohtml", err.Error())
 			return
 		}
-
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	})
