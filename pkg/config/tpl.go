@@ -10,6 +10,7 @@ func init() {
 		"templates/add.gohtml",
 		"templates/list.gohtml",
 		"templates/detail.gohtml",
+		"templates/shutdown.gohtml",
 	}
 	TPL = template.Must(template.ParseFiles(templateList...))
 }

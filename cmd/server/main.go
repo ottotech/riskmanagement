@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/http/rest"
@@ -14,6 +15,17 @@ import (
 const (
 	Memory int = 1
 )
+
+func shutDownHandler(signal chan bool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
+			return
+		}
+		signal <- true
+		return
+	})
+}
 
 func main() {
 	// set up storage
@@ -33,7 +45,8 @@ func main() {
 		updater = updating.NewService(s)
 		// more data stores can be supported
 	}
-
+	idleConnsClosed := make(chan struct{})
+	shutDownSignal := make(chan bool, 1)
 	app := new(rest.App)
 	mux := http.NewServeMux()
 	mux.Handle("/", app.List.Handler(lister)) // home
@@ -43,9 +56,20 @@ func main() {
 	mux.Handle("/delete-risks", app.DeleteRisk.Handler(deleter, lister))
 	mux.Handle("/delete-risk-matrix", app.DeleteRiskMatrix.Handler(deleter, lister))
 	mux.Handle("/media/", app.Media.Handler())
+	mux.Handle("/shutdown", shutDownHandler(shutDownSignal))
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: mux,
 	}
-	log.Fatal(server.ListenAndServe())
+	go func() {
+		<-shutDownSignal
+		if err := server.Shutdown(context.Background()); err != nil {
+			log.Printf("HTTP server Shutdown: %v", err)
+		}
+		close(idleConnsClosed)
+	}()
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalf("HTTP server ListenAndServe: %v", err)
+	}
+	<-idleConnsClosed
 }

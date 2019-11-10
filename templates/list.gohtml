@@ -11,6 +11,7 @@
 <body>
 {{$RiskMatrixList := .}} <!-- Cool stuff -->
 <div class="centered">
+    {{template "shutdown"}}
     <h3>List of Projects:</h3>
     {{if gt (len $RiskMatrixList) 0 }}
         <ul style="list-style: none;">
