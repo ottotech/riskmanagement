@@ -170,14 +170,14 @@ func drawRiskMatrixBorders(im *image.RGBA, m listing.RiskMatrix) {
 	h2Border := image.Rect(0, (m.MatImgHeight/m.MatNrRows)*2, m.MatImgWidth, ((m.MatImgHeight/m.MatNrRows)*2)-m.BorderWidth)
 
 	// draw borders inside image
-	draw.Draw(im, topBorder, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, rightBorder, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, bottomBorder, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, leftBorder, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, v1Border, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, v2Border, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, h1Border, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
-	draw.Draw(im, h2Border, &image.Uniform{C: m.BorderColor}, image.ZP, draw.Src)
+	draw.Draw(im, topBorder, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, rightBorder, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, bottomBorder, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, leftBorder, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, v1Border, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, v2Border, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, h1Border, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
+	draw.Draw(im, h2Border, &image.Uniform{C: m.BorderColor}, image.Point{}, draw.Src)
 }
 
 func addLabel(img *image.RGBA, label string, x, y int, c color.RGBA) {
