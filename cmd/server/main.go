@@ -43,7 +43,6 @@ func main() {
 		lister = listing.NewService(s)
 		deleter = deleting.NewService(s)
 		updater = updating.NewService(s)
-		// more data stores can be supported
 	}
 	idleConnsClosed := make(chan struct{})
 	shutDownSignal := make(chan bool, 1)
