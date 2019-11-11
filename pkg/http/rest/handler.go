@@ -104,7 +104,6 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
-
 	})
 }
 
