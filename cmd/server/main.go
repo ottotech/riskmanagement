@@ -6,6 +6,7 @@ import (
 	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/http/rest"
 	"github.com/ottotech/riskmanagement/pkg/listing"
+	"github.com/ottotech/riskmanagement/pkg/storage/json"
 	"github.com/ottotech/riskmanagement/pkg/storage/memory"
 	"github.com/ottotech/riskmanagement/pkg/updating"
 	"log"
@@ -14,6 +15,7 @@ import (
 
 const (
 	Memory int = 1
+	JSON   int = 2
 )
 
 func shutDownHandler(signal chan bool) http.Handler {
@@ -29,7 +31,7 @@ func shutDownHandler(signal chan bool) http.Handler {
 
 func main() {
 	// set up storage
-	storageType := Memory // this could be a flag; hardcoded here for simplicity
+	storageType := JSON // this could be a flag; hardcoded here for simplicity
 
 	var adder adding.Service
 	var lister listing.Service
@@ -39,6 +41,15 @@ func main() {
 	switch storageType {
 	case Memory:
 		s := new(memory.Storage)
+		adder = adding.NewService(s)
+		lister = listing.NewService(s)
+		deleter = deleting.NewService(s)
+		updater = updating.NewService(s)
+	case JSON:
+		s, err := json.NewStorage()
+		if err != nil {
+			log.Fatal(err)
+		}
 		adder = adding.NewService(s)
 		lister = listing.NewService(s)
 		deleter = deleting.NewService(s)
