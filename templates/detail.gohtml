@@ -148,7 +148,7 @@
                 if (xhr.status === 200){
                     console.log("SUCCESS");
                     window.location = "/get/" + riskMatrixID
-                } else if (xhr.status === 403) {
+                } else if (xhr.status === 400) {
                     alert(xhr.responseText);
                 } else {
                     console.log("ERROR");

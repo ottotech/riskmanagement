@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/ottotech/riskmanagement/pkg/adding"
+	"github.com/ottotech/riskmanagement/pkg/config"
 	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/http/rest"
 	"github.com/ottotech/riskmanagement/pkg/listing"
@@ -31,21 +32,19 @@ func shutDownHandler(signal chan bool) http.Handler {
 
 func main() {
 	// set up storage
-	storageType := JSON // this could be a flag; hardcoded here for simplicity
-
 	var adder adding.Service
 	var lister listing.Service
 	var deleter deleting.Service
 	var updater updating.Service
 
-	switch storageType {
-	case Memory:
+	switch config.StorageType {
+	case config.Memory:
 		s := new(memory.Storage)
 		adder = adding.NewService(s)
 		lister = listing.NewService(s)
 		deleter = deleting.NewService(s)
 		updater = updating.NewService(s)
-	case JSON:
+	case config.JSON:
 		s, err := json.NewStorage()
 		if err != nil {
 			log.Fatal(err)
@@ -54,6 +53,8 @@ func main() {
 		lister = listing.NewService(s)
 		deleter = deleting.NewService(s)
 		updater = updating.NewService(s)
+	default:
+		log.Fatalln("No valid data store specified.")
 	}
 	idleConnsClosed := make(chan struct{})
 	shutDownSignal := make(chan bool, 1)

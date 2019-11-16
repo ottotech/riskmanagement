@@ -112,7 +112,7 @@ type AddRisk struct {
 
 func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
+		if r.Method != http.MethodPost {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 			return
 		}
@@ -166,9 +166,9 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 		for i, r := range risks {
 			c, ok := riskClassifier(r)
 			if !ok {
-				w.WriteHeader(http.StatusForbidden)
-				msg := fmt.Sprintf("Probability and impact numbers should be a number between 1 and 0 on risk %v", r.Name)
-				_, _ = w.Write([]byte(msg)) // ignoring error for simplicity
+				w.WriteHeader(http.StatusBadRequest)
+				msg := fmt.Sprintf("Probability and impact numbers should be numbers between 1 and 3 on risk (%v)", r.Name)
+				_, _ = w.Write([]byte(msg))
 				return
 			}
 			risks[i].Classification = c

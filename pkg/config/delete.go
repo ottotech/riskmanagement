@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-func init() {
+func flushMemory() {
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
