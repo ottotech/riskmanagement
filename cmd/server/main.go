@@ -14,11 +14,6 @@ import (
 	"net/http"
 )
 
-const (
-	Memory int = 1
-	JSON   int = 2
-)
-
 func shutDownHandler(signal chan bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -38,7 +33,7 @@ func main() {
 	var updater updating.Service
 
 	switch config.StorageType {
-	case config.Memory:
+	case config.MEMORY:
 		s := new(memory.Storage)
 		adder = adding.NewService(s)
 		lister = listing.NewService(s)

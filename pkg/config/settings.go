@@ -12,7 +12,7 @@ type storage int
 var StorageType storage
 
 const (
-	Memory storage = iota
+	MEMORY storage = iota
 	JSON
 )
 
@@ -44,7 +44,7 @@ func init() {
 		StorageType = JSON
 	}
 	if s.StorageTypeSTR == "MEMORY" {
-		StorageType = Memory
+		StorageType = MEMORY
 		removeAllMedia()
 	}
 }
