@@ -45,6 +45,6 @@ func init() {
 	}
 	if s.StorageTypeSTR == "MEMORY" {
 		StorageType = Memory
-		flushMemory()
+		removeAllMedia()
 	}
 }

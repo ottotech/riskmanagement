@@ -8,12 +8,11 @@ import (
 	"path/filepath"
 )
 
-func flushMemory() {
+func removeAllMedia() {
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	mediaFolder := filepath.Join(wd, "media")
 	files, err := ioutil.ReadDir(mediaFolder)
 	if err != nil {
