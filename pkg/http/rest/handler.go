@@ -386,7 +386,6 @@ func (h *Get) Handler(s listing.Service) http.Handler {
 			utils.RenderTemplate(w, "detail.gohtml", ctx)
 			return
 		}
-
 	})
 }
 

@@ -95,7 +95,7 @@ func (s *Storage) AddRiskMatrix(rm adding.RiskMatrix) error {
 // UpdateRiskMatrixSize updates the risk matrix size of a given risk matrix in the repository
 func (s *Storage) UpdateRiskMatrixSize(riskMatrixID, newSize int) error {
 	var riskMatrix RiskMatrix
-	err := s.db.Read(CollectionMatrix, strconv.Itoa(riskMatrixID), riskMatrix)
+	err := s.db.Read(CollectionMatrix, strconv.Itoa(riskMatrixID), &riskMatrix)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func (s *Storage) UpdateRiskMatrixSize(riskMatrixID, newSize int) error {
 // AddRisk saves the given risk in the repository
 func (s *Storage) AddRisk(r adding.Risk) error {
 	var riskMatrix RiskMatrix
-	err := s.db.Read(CollectionMatrix, strconv.Itoa(r.RiskMatrixID), riskMatrix)
+	err := s.db.Read(CollectionMatrix, strconv.Itoa(r.RiskMatrixID), &riskMatrix)
 	if err != nil {
 		return err
 	}
@@ -138,7 +138,7 @@ func (s *Storage) AddRisk(r adding.Risk) error {
 func (s *Storage) GetRiskMatrix(id int) (listing.RiskMatrix, error) {
 	var riskMatrix RiskMatrix
 	var listingRiskMatrix listing.RiskMatrix
-	err := s.db.Read(CollectionMatrix, strconv.Itoa(id), riskMatrix)
+	err := s.db.Read(CollectionMatrix, strconv.Itoa(id), &riskMatrix)
 	if err != nil {
 		return listingRiskMatrix, err
 	}
@@ -257,7 +257,7 @@ func (s *Storage) GetAllRisks(riskMatrixID int) []listing.Risk {
 func (s *Storage) GetRisk(riskID string) (listing.Risk, error) {
 	var risk Risk
 	var listingRisk listing.Risk
-	err := s.db.Read(CollectionRisk, riskID, risk)
+	err := s.db.Read(CollectionRisk, riskID, &risk)
 	if err != nil {
 		return listingRisk, err
 	}
