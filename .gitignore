@@ -2,4 +2,4 @@
 .idea
 *.DB_Store
 /media/*.png
-/data
+data
