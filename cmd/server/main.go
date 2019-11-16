@@ -60,7 +60,7 @@ func main() {
 	shutDownSignal := make(chan bool, 1)
 	app := new(rest.App)
 	mux := http.NewServeMux()
-	mux.Handle("/", app.List.Handler(lister)) // home
+	mux.Handle("/", app.List.Handler(lister))
 	mux.Handle("/add", app.Add.Handler(adder, lister))
 	mux.Handle("/get/", app.Get.Handler(lister))
 	mux.Handle("/add-risks", app.AddRisk.Handler(adder, lister, updater))
