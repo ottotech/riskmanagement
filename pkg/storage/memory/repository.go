@@ -269,5 +269,4 @@ func (m *Storage) DeleteRiskMatrix(riskMatrixID int) error {
 		}
 	}
 	return errors.New(fmt.Sprintf("risk matrix not found by the give ID: %v.", riskMatrixID))
-
 }
