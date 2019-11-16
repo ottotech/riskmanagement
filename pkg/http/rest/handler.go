@@ -33,6 +33,10 @@ type List struct {
 
 func (h *List) Handler(s listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
+			return
+		}
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
@@ -86,7 +90,11 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		w.Header().Set("Content-Type", "application/json")
 
 		// get riskID from request
-		id, _ := strconv.Atoi(r.PostFormValue("risk_matrix_id"))
+		id, err := strconv.Atoi(r.PostFormValue("risk_matrix_id"))
+		if err != nil {
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			return
+		}
 
 		// before deleting the matrix, let's instantiate it
 		riskMatrix, _ := l.GetRiskMatrix(id)

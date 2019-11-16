@@ -45,12 +45,12 @@ const (
 	CollectionMatrix = "matrix"
 )
 
-// Memory storage keeps data in memory
+// Json storage keeps data in json files
 type Storage struct {
 	db *scribble.Driver
 }
 
-// NewStorage returns a new JSON  storage
+// NewStorage returns a new JSON storage
 func NewStorage() (*Storage, error) {
 	var err error
 	s := new(Storage)

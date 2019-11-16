@@ -10,6 +10,7 @@ import (
 type storage int
 
 var StorageType storage
+var Logger *log.Logger
 
 const (
 	MEMORY storage = iota
@@ -23,6 +24,8 @@ type settings struct {
 func init() {
 	var err error
 	var s settings
+
+	// get settings from config.json
 	goPath := os.Getenv("GOPATH")
 	confPath := path.Join(goPath, "/src/github.com/ottotech/riskmanagement/config.json")
 	f, err := os.OpenFile(confPath, os.O_RDONLY, 0755)

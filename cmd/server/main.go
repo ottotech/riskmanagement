@@ -12,6 +12,7 @@ import (
 	"github.com/ottotech/riskmanagement/pkg/updating"
 	"log"
 	"net/http"
+	"os"
 )
 
 func shutDownHandler(signal chan bool) http.Handler {
@@ -26,6 +27,18 @@ func shutDownHandler(signal chan bool) http.Handler {
 }
 
 func main() {
+	// configure logger
+	logFile, err := os.OpenFile("error.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	config.Logger = log.New(logFile, "Error Logger:\t", log.Ldate|log.Ltime|log.Lshortfile)
+	defer func() {
+		err := logFile.Close()
+		if err != nil {
+			config.Logger.Println(err)
+		}
+	}()
 	// set up storage
 	var adder adding.Service
 	var lister listing.Service
@@ -42,6 +55,7 @@ func main() {
 	case config.JSON:
 		s, err := json.NewStorage()
 		if err != nil {
+			config.Logger.Println(err)
 			log.Fatal(err)
 		}
 		adder = adding.NewService(s)
