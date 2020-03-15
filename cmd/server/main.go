@@ -63,7 +63,7 @@ func main() {
 		deleter = deleting.NewService(s)
 		updater = updating.NewService(s)
 	default:
-		log.Fatalln("No valid data store specified.")
+		config.Logger.Fatalln("No valid data store specified.")
 	}
 	idleConnsClosed := make(chan struct{})
 	shutDownSignal := make(chan bool, 1)
@@ -84,12 +84,12 @@ func main() {
 	go func() {
 		<-shutDownSignal
 		if err := server.Shutdown(context.Background()); err != nil {
-			log.Printf("HTTP server Shutdown: %v", err)
+			config.Logger.Printf("HTTP server Shutdown: %v", err)
 		}
 		close(idleConnsClosed)
 	}()
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatalf("HTTP server ListenAndServe: %v", err)
+		config.Logger.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
 	<-idleConnsClosed
 }
