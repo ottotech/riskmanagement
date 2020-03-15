@@ -65,7 +65,7 @@ func (s *service) GetAllRisks(riskMatrixID int) []Risk {
 // GetRisk returns a risk with the given ID
 func (s *service) GetRisk(riskID string) (Risk, error) {
 	r, err := s.r.GetRisk(riskID)
-	if err !=nil {
+	if err != nil {
 		config.Logger.Println(err)
 	}
 	return r, err
