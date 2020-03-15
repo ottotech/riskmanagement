@@ -56,6 +56,7 @@ func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.Handler {
 			utils.RenderTemplate(w, "add.gohtml", nil)
 			return
 		}
+		var err error
 		name := r.PostFormValue("project")
 		if name == "" {
 			utils.RenderTemplate(w, "add.gohtml", "Error: You need to specify the project name.")
@@ -64,9 +65,19 @@ func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.Handler {
 		t := time.Now().Format("02_01_2006_03_04_05")
 		filename := fmt.Sprintf("%v.png", t)
 		rm := adding.RiskMatrix{Project: name, Path: filename}
-		_ = a.AddRiskMatrix(rm)
-		newRm, _ := l.GetRiskMatrixByPath(filename)
-		err := draw.RiskMatrixDrawer(filename, newRm, []adding.Risk{})
+		err = a.AddRiskMatrix(rm)
+		if err != nil {
+			utils.RenderTemplate(w, "add.gohtml", fmt.Sprintf("There was an internal error."))
+			return
+		}
+		newRm, err := l.GetRiskMatrixByPath(filename)
+		if err != nil {
+			utils.RenderTemplate(w, "add.gohtml", fmt.Sprintf("There was an internal error."))
+			return
+		}
+		// TODO: What happens if we add the risk matrix data but we cannot draw the risk matrix
+		// TODO: for some reason?
+		err = draw.RiskMatrixDrawer(filename, newRm, []adding.Risk{})
 		if err != nil {
 			utils.RenderTemplate(w, "add.gohtml", err.Error())
 			return
@@ -92,24 +103,36 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		// get riskID from request
 		id, err := strconv.Atoi(r.PostFormValue("risk_matrix_id"))
 		if err != nil {
-			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// before deleting the matrix, let's instantiate it
-		riskMatrix, _ := l.GetRiskMatrix(id)
+		riskMatrix, err := l.GetRiskMatrix(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// delete the risk matrix
-		_ = d.DeleteRiskMatrix(id)
-
+		err = d.DeleteRiskMatrix(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// TODO: What happens when we delete the risk matrix but for some reason we are not able to remove
+		// TODO: all the risks?
 		// delete all risks from matrix
 		risks := l.GetAllRisks(riskMatrix.ID)
 		risksIDs := make([]string, 0)
 		for _, r := range risks {
 			risksIDs = append(risksIDs, r.ID)
 		}
-		_ = d.DeleteRisk(risksIDs...)
-
+		err = d.DeleteRisk(risksIDs...)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
 	})
@@ -203,12 +226,19 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-
 		// adding risks
-		_ = a.AddRisk(newRisks...)
+		err = a.AddRisk(newRisks...)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// get risk matrix
-		riskMatrix, _ := l.GetRiskMatrix(riskMatrixID)
+		riskMatrix, err := l.GetRiskMatrix(riskMatrixID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// this anonymous func will count how many risks are per block in the risk matrix.
 		// then it will get the number of risks from the block that has the most number of risks.
@@ -295,8 +325,13 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 		// resize risk matrix image if necessary
 		riskMatrixResize(riskMatrix, risks)
 
+		// TODO: What happens if we add the risks but we cannot draw the risk matrix again?
 		// draw risk matrix again in order to add the new risks
-		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
+		err = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// if all goes well we send a status 200
 		w.WriteHeader(http.StatusOK)
@@ -321,10 +356,18 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 		id := r.PostFormValue("risk_id")
 
 		// we get the risk instance before deleting it to use it later
-		risk, _ := l.GetRisk(id)
+		risk, err := l.GetRisk(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// delete the risk
-		_ = d.DeleteRisk(id)
+		err = d.DeleteRisk(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// get riskMatrix of the deleted risk
 		riskMatrix, _ := l.GetRiskMatrix(risk.RiskMatrixID)
@@ -373,7 +416,6 @@ func (h *GetMatrix) Handler(s listing.Service) http.Handler {
 			// get risk matrix
 			riskMatrix, err := s.GetRiskMatrix(id)
 			if err != nil {
-				log.Println(err)
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}

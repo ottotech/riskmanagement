@@ -116,8 +116,8 @@ func (s *Storage) AddRisk(r adding.Risk) error {
 	if err != nil {
 		return err
 	}
-	dateCreated := time.Now()
-	id := fmt.Sprintf("%d_%d", r.RiskMatrixID, dateCreated.Unix())
+	dateCreated := time.Now().UnixNano()
+	id := fmt.Sprintf("%d_%d", r.RiskMatrixID, dateCreated)
 	newR := Risk{
 		ID:             id,
 		RiskMatrixID:   r.RiskMatrixID,
