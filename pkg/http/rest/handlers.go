@@ -19,19 +19,19 @@ import (
 )
 
 type App struct {
-	List             *List
-	Add              *Add
-	Get              *Get
+	ListMatrix       *ListMatrix
+	AddMatrix        *AddMatrix
+	GetMatrix        *GetMatrix
 	Media            *Media
 	AddRisk          *AddRisk
 	DeleteRisk       *DeleteRisk
 	DeleteRiskMatrix *DeleteRiskMatrix
 }
 
-type List struct {
+type ListMatrix struct {
 }
 
-func (h *List) Handler(s listing.Service) http.Handler {
+func (h *ListMatrix) Handler(s listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
@@ -47,10 +47,10 @@ func (h *List) Handler(s listing.Service) http.Handler {
 	})
 }
 
-type Add struct {
+type AddMatrix struct {
 }
 
-func (h *Add) Handler(a adding.Service, l listing.Service) http.Handler {
+func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			utils.RenderTemplate(w, "add.gohtml", nil)
@@ -351,10 +351,10 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 	})
 }
 
-type Get struct {
+type GetMatrix struct {
 }
 
-func (h *Get) Handler(s listing.Service) http.Handler {
+func (h *GetMatrix) Handler(s listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			// clean path to get RiskMatrix ID
