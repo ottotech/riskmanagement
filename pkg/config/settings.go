@@ -43,8 +43,5 @@ func init() {
 	}
 	if s.Storage == "MEMORY" {
 		StorageType = MEMORY
-		if s.Testing {
-			removeAllMedia()
-		}
 	}
 }
