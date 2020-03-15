@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -18,7 +19,8 @@ const (
 )
 
 type settings struct {
-	StorageTypeSTR string `json:"storage_type"`
+	Storage string `json:"storage_type"`
+	Testing bool   `json:"testing"`
 }
 
 func init() {
@@ -28,26 +30,21 @@ func init() {
 	// get settings from config.json
 	goPath := os.Getenv("GOPATH")
 	confPath := path.Join(goPath, "/src/github.com/ottotech/riskmanagement/config.json")
-	f, err := os.OpenFile(confPath, os.O_RDONLY, 0755)
+	f, err := ioutil.ReadFile(confPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer func() {
-		err := f.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}()
-	decoder := json.NewDecoder(f)
-	err = decoder.Decode(&s)
+	err = json.Unmarshal(f, &s)
 	if err != nil {
-		log.Fatalln("Could not decode config.json file; got err: ", err)
+		log.Fatalln(err)
 	}
-	if s.StorageTypeSTR == "JSON" {
+	if s.Storage == "JSON" {
 		StorageType = JSON
 	}
-	if s.StorageTypeSTR == "MEMORY" {
+	if s.Storage == "MEMORY" {
 		StorageType = MEMORY
-		removeAllMedia()
+		if s.Testing {
+			removeAllMedia()
+		}
 	}
 }
