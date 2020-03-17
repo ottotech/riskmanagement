@@ -125,9 +125,17 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		}
 
 		// delete image
-		err = os.Remove(riskMatrix.Path)
+		mediaPath, err := l.GetMediaPath()
 		if err != nil {
 			config.Logger.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = os.Remove(filepath.Join(mediaPath, riskMatrix.Path))
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// TODO: What happens when we delete the risk matrix but for some reason we are not able to remove
