@@ -53,8 +53,8 @@ func (h *ListMatrix) Handler(s listing.Service) http.HandlerFunc {
 type AddMatrix struct {
 }
 
-func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			utils.RenderTemplate(w, "add.gohtml", nil)
 			return
@@ -87,14 +87,14 @@ func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.Handler {
 		}
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
-	})
+	}
 }
 
 type DeleteRiskMatrix struct {
 }
 
-func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 			return
@@ -145,14 +145,14 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		}
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
-	})
+	}
 }
 
 type AddRisk struct {
 }
 
-func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 			return
@@ -345,14 +345,14 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 
 		// if all goes well we send a status 200
 		w.WriteHeader(http.StatusOK)
-	})
+	}
 }
 
 type DeleteRisk struct {
 }
 
-func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		// only allow POST method
 		if r.Method == http.MethodGet {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -401,14 +401,14 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
-	})
+	}
 }
 
 type GetMatrix struct {
 }
 
-func (h *GetMatrix) Handler(s listing.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			// clean path to get RiskMatrix ID
 			p := path.Clean("/" + r.URL.Path)
@@ -446,7 +446,7 @@ func (h *GetMatrix) Handler(s listing.Service) http.Handler {
 			utils.RenderTemplate(w, "detail.gohtml", ctx)
 			return
 		}
-	})
+	}
 }
 
 type Media struct {
