@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ottotech/riskmanagement/pkg/adding"
+	"github.com/ottotech/riskmanagement/pkg/config"
 	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/draw"
 	"github.com/ottotech/riskmanagement/pkg/listing"
@@ -13,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -26,13 +28,14 @@ type App struct {
 	AddRisk          *AddRisk
 	DeleteRisk       *DeleteRisk
 	DeleteRiskMatrix *DeleteRiskMatrix
+	AddMediaPath     *AddMediaPath
 }
 
 type ListMatrix struct {
 }
 
-func (h *ListMatrix) Handler(s listing.Service) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (h *ListMatrix) Handler(s listing.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, http.StatusText(405), http.StatusMethodNotAllowed)
 			return
@@ -44,7 +47,7 @@ func (h *ListMatrix) Handler(s listing.Service) http.Handler {
 		list := s.GetAllRiskMatrix()
 		utils.RenderTemplate(w, "list.gohtml", list)
 		return
-	})
+	}
 }
 
 type AddMatrix struct {
@@ -120,6 +123,13 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// delete image
+		err = os.Remove(riskMatrix.Path)
+		if err != nil {
+			config.Logger.Println(err)
+		}
+
 		// TODO: What happens when we delete the risk matrix but for some reason we are not able to remove
 		// TODO: all the risks?
 		// delete all risks from matrix
@@ -467,4 +477,65 @@ func (h *Media) Handler() http.Handler {
 		w.Header().Set("Cache-Control", "no-cache")
 		http.ServeContent(w, r, f.Name(), fi.ModTime(), f)
 	})
+}
+
+type AddMediaPath struct {
+}
+
+func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			utils.RenderTemplate(w, "mediapath.gohtml", nil)
+			return
+		}
+		if r.Method == http.MethodPost {
+			if err := r.ParseForm(); err != nil {
+				http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+				return
+			}
+			mediaPath := r.PostForm.Get("mediapath")
+			if mediaPath == "" {
+				requestError := "You need to specify a valid path."
+				utils.RenderTemplate(w, "mediapath.gohtml", requestError)
+				return
+			}
+			mediaPath = filepath.Clean(mediaPath)
+			if _, err := os.Stat(mediaPath); os.IsNotExist(err) {
+				requestError := "You need to specify a valid path."
+				utils.RenderTemplate(w, "mediapath.gohtml", requestError)
+				return
+			}
+			f, err := os.Open(mediaPath)
+			if err != nil {
+				config.Logger.Println(err)
+				http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+				return
+			}
+			defer func() {
+				err := f.Close()
+				if err != nil {
+					config.Logger.Println(err)
+				}
+			}()
+			fi, err := f.Stat()
+			if err != nil {
+				config.Logger.Println(err)
+				http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+				return
+			}
+			if !fi.IsDir() {
+				requestError := "You need to specify a valid path to folder, not to a file."
+				utils.RenderTemplate(w, "mediapath.gohtml", requestError)
+				return
+			}
+			err = adder.SaveMediaPath(mediaPath)
+			if err != nil {
+				config.Logger.Println(err)
+				http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+				return
+			}
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+	}
 }

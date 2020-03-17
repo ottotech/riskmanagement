@@ -43,6 +43,10 @@ const (
 	CollectionRisk = "risks"
 	// CollectionMatrix identifier for the JSON collection of matrix
 	CollectionMatrix = "matrix"
+	// MediaPath identifier for the path of media files
+	MediaPath = "media"
+	// MediaResource is the resource ID to access the MediaPath in the storage
+	MediaResource = "1"
 )
 
 // Json storage keeps data in json files
@@ -61,6 +65,24 @@ func NewStorage() (*Storage, error) {
 		return nil, err
 	}
 	return s, nil
+}
+
+// SaveMediaPath saves the given path that is going to be used to store media files, i.e., the risk matrix pictures.
+func (s *Storage) SaveMediaPath(path string) error {
+	if err := s.db.Write(MediaPath, MediaResource, path); err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetMediaPath get the media path stored.
+func (s *Storage) GetMediaPath() (string, error) {
+	var mediaPath string
+	err := s.db.Read(MediaPath, MediaResource, &mediaPath)
+	if err != nil {
+		return mediaPath, err
+	}
+	return mediaPath, nil
 }
 
 // AddRiskMatrix saves the given risk matrix in repository

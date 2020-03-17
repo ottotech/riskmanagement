@@ -11,6 +11,7 @@ func init() {
 		"templates/list.gohtml",
 		"templates/detail.gohtml",
 		"templates/shutdown.gohtml",
+		"templates/mediapath.gohtml",
 	}
 	TPL = template.Must(template.ParseFiles(templateList...))
 }

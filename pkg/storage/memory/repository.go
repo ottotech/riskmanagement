@@ -24,6 +24,9 @@ const (
 	wordHeight   = 13
 )
 
+// mediaPath will store the media path temporary in memory
+var mediaPath = ""
+
 // colors
 var (
 	red    = color.RGBA{R: 0xff, A: 0xff}                   // rgb(255, 0, 0) high risk
@@ -37,6 +40,20 @@ var (
 type Storage struct {
 	riskMatrixSlice []RiskMatrix
 	risks           []Risk
+}
+
+// SaveMediaPath saves the given path that is going to be used to store media files, i.e., the risk matrix pictures.
+func (m *Storage) SaveMediaPath(path string) error {
+	mediaPath = path
+	return nil
+}
+
+// GetMediaPath get the media path stored.
+func (m *Storage) GetMediaPath() (string, error) {
+	if mediaPath == "" {
+		return "", errors.New("no media path defined in memory")
+	}
+	return mediaPath, nil
 }
 
 // Add saves the given risk matrix in repository

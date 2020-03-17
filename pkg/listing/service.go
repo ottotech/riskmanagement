@@ -9,6 +9,7 @@ type Service interface {
 	GetAllRisks(int) []Risk
 	GetRisk(string) (Risk, error)
 	GetAllRiskMatrix() []RiskMatrix
+	GetMediaPath() (string, error)
 }
 
 type Repository interface {
@@ -22,6 +23,8 @@ type Repository interface {
 	GetAllRisks(int) []Risk
 	// GetRisk returns a risk with the given ID
 	GetRisk(string) (Risk, error)
+	// GetMediaPath returns the path where the media is stored
+	GetMediaPath() (string, error)
 }
 
 type service struct {
@@ -69,4 +72,10 @@ func (s *service) GetRisk(riskID string) (Risk, error) {
 		config.Logger.Println(err)
 	}
 	return r, err
+}
+
+// GetMediaPath returns the path where the media is stored
+func (s *service) GetMediaPath() (string, error) {
+	path, err := s.r.GetMediaPath()
+	return path, err
 }

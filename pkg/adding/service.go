@@ -8,12 +8,14 @@ import (
 type Service interface {
 	AddRiskMatrix(...RiskMatrix) error
 	AddRisk(...Risk) error
+	SaveMediaPath(path string) error
 }
 
 // Repository provides access to RiskMatrix repository.
 type Repository interface {
 	AddRiskMatrix(RiskMatrix) error
 	AddRisk(Risk) error
+	SaveMediaPath(path string) error
 }
 
 type service struct {
@@ -47,4 +49,10 @@ func (s *service) AddRisk(r ...Risk) error {
 		}
 	}
 	return nil
+}
+
+// SaveMediaPath saves the media path were all the matrix will be stored
+func (s *service) SaveMediaPath(path string) error {
+	err := s.rmR.SaveMediaPath(path)
+	return err
 }

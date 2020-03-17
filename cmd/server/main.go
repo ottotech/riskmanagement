@@ -7,6 +7,7 @@ import (
 	"github.com/ottotech/riskmanagement/pkg/deleting"
 	"github.com/ottotech/riskmanagement/pkg/http/rest"
 	"github.com/ottotech/riskmanagement/pkg/listing"
+	mw "github.com/ottotech/riskmanagement/pkg/middlewares"
 	"github.com/ottotech/riskmanagement/pkg/storage/json"
 	"github.com/ottotech/riskmanagement/pkg/storage/memory"
 	"github.com/ottotech/riskmanagement/pkg/updating"
@@ -69,14 +70,16 @@ func main() {
 	shutDownSignal := make(chan bool, 1)
 	app := new(rest.App)
 	mux := http.NewServeMux()
-	mux.Handle("/", app.ListMatrix.Handler(lister))
+	mux.Handle("/", mw.Chain(app.ListMatrix.Handler(lister), mw.MediaPathRequired(lister)))
 	mux.Handle("/add", app.AddMatrix.Handler(adder, lister))
 	mux.Handle("/get/", app.GetMatrix.Handler(lister))
 	mux.Handle("/add-risks", app.AddRisk.Handler(adder, lister, updater))
 	mux.Handle("/delete-risks", app.DeleteRisk.Handler(deleter, lister))
 	mux.Handle("/delete-risk-matrix", app.DeleteRiskMatrix.Handler(deleter, lister))
+	mux.Handle("/set-media-path", app.AddMediaPath.Handler(adder))
 	mux.Handle("/media/", app.Media.Handler())
 	mux.Handle("/shutdown", shutDownHandler(shutDownSignal))
+	mux.Handle("/favicon.ico", http.NotFoundHandler())
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: mux,

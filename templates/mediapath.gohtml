@@ -6,20 +6,24 @@
     <meta name="text" content="">
     <meta name="author" content="Otto Schuldt">
     <title>Risk Assessment APP</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 {{$Error := .}} <!-- Cool stuff -->
 <div class="centered">
     {{template "shutdown"}}
-    <h2>Create project</h2>
-    <a href="/">Return</a>
+    <h3>Add media path:</h3>
     {{if $Error }}
         <p class="error">{{$Error}}</p>
     {{end}}
-    <form action="/add" method="post" autocomplete="off">
-        <label for="project">Project Name:</label>
-        <input id="project" type="text" name="project">
-        <button type="submit">Create</button>
+    <form action="/set-media-path" method="post" autocomplete="off">
+        <label for="mediapath">Set media path:</label>
+        <input style="width: 700px" id="mediapath" type="text" name="mediapath">
+        <button type="submit">Set</button>
     </form>
 </div>
 
