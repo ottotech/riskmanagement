@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
@@ -22,6 +23,8 @@ type settings struct {
 	Storage string `json:"storage_type"`
 	Testing bool   `json:"testing"`
 }
+
+var TPL *template.Template
 
 func init() {
 	var err error
@@ -44,4 +47,8 @@ func init() {
 	if s.Storage == "MEMORY" {
 		StorageType = MEMORY
 	}
+
+	// parse html templates
+	TPL = template.Must(template.ParseGlob("templates/*.gohtml"))
+
 }
