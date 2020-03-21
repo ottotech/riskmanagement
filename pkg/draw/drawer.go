@@ -3,6 +3,7 @@ package draw
 import (
 	"errors"
 	"github.com/ottotech/riskmanagement/pkg/adding"
+	"github.com/ottotech/riskmanagement/pkg/config"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -11,26 +12,19 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
-	"log"
 	"os"
-	"path/filepath"
 )
 
-func RiskMatrixDrawer(filename string, m listing.RiskMatrix, risks []adding.Risk) error {
+func RiskMatrixDrawer(pathToDraw string, m listing.RiskMatrix, risks []adding.Risk) error {
 	myImg := image.NewRGBA(image.Rect(0, 0, m.MatImgWidth, m.MatImgHeight))
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	path := filepath.Join(wd, "media", filename)
-	outputFile, err := os.Create(path)
+	outputFile, err := os.Create(pathToDraw)
 	if err != nil {
 		return errors.New("we couldn't create the base risk matrix")
 	}
 	defer func() {
 		err = outputFile.Close()
 		if err != nil {
-			log.Println(err)
+			config.Logger.Println(err)
 		}
 	}()
 

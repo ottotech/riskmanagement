@@ -75,13 +75,22 @@ func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.HandlerFun
 		}
 		newRm, err := l.GetRiskMatrixByPath(filename)
 		if err != nil {
+			config.Logger.Println(err)
 			utils.RenderTemplate(w, "templates/add.gohtml", fmt.Sprintf("There was an internal error."))
 			return
 		}
 		// TODO: What happens if we add the risk matrix data but we cannot draw the risk matrix
 		// TODO: for some reason?
-		err = draw.RiskMatrixDrawer(filename, newRm, []adding.Risk{})
+		mediaPath, err := l.GetMediaPath()
 		if err != nil {
+			config.Logger.Println(err)
+			utils.RenderTemplate(w, "templates/add.gohtml", err.Error())
+			return
+		}
+		pathToDraw := filepath.Join(mediaPath, filename)
+		err = draw.RiskMatrixDrawer(pathToDraw, newRm, []adding.Risk{})
+		if err != nil {
+			config.Logger.Println(err)
 			utils.RenderTemplate(w, "templates/add.gohtml", err.Error())
 			return
 		}
@@ -113,6 +122,7 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		// before deleting the matrix, let's instantiate it
 		riskMatrix, err := l.GetRiskMatrix(id)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -254,6 +264,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 		// get risk matrix
 		riskMatrix, err := l.GetRiskMatrix(riskMatrixID)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -344,9 +355,17 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 		riskMatrixResize(riskMatrix, risks)
 
 		// TODO: What happens if we add the risks but we cannot draw the risk matrix again?
-		// draw risk matrix again in order to add the new risks
-		err = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
+		mediaPath, err := l.GetMediaPath()
 		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		pathToDraw := filepath.Join(mediaPath, riskMatrix.Path)
+		// draw risk matrix again in order to add the new risks
+		err = draw.RiskMatrixDrawer(pathToDraw, riskMatrix, risks)
+		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -376,6 +395,7 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 		// we get the risk instance before deleting it to use it later
 		risk, err := l.GetRisk(id)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -388,7 +408,12 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 		}
 
 		// get riskMatrix of the deleted risk
-		riskMatrix, _ := l.GetRiskMatrix(risk.RiskMatrixID)
+		riskMatrix, err := l.GetRiskMatrix(risk.RiskMatrixID)
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// get all risks of the matrix
 		var risks []adding.Risk
@@ -434,6 +459,7 @@ func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
 			// get risk matrix
 			riskMatrix, err := s.GetRiskMatrix(id)
 			if err != nil {
+				config.Logger.Println(err)
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}

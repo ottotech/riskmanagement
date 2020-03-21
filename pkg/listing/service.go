@@ -1,7 +1,5 @@
 package listing
 
-import "github.com/ottotech/riskmanagement/pkg/config"
-
 // Service provides risk matrix and risk listing operations
 type Service interface {
 	GetRiskMatrix(int) (RiskMatrix, error)
@@ -39,19 +37,12 @@ func NewService(r Repository) Service {
 // GetRiskMatrix returns a risk matrix with specified ID
 func (s *service) GetRiskMatrix(id int) (RiskMatrix, error) {
 	rm, err := s.r.GetRiskMatrix(id)
-	if err != nil {
-		config.Logger.Println(err)
-		return rm, err
-	}
 	return rm, err
 }
 
 // GetRiskMatrixByPath returns a risk matrix with the specified image path
 func (s *service) GetRiskMatrixByPath(p string) (RiskMatrix, error) {
 	rm, err := s.r.GetRiskMatrixByPath(p)
-	if err != nil {
-		config.Logger.Println(err)
-	}
 	return rm, err
 }
 
@@ -68,9 +59,6 @@ func (s *service) GetAllRisks(riskMatrixID int) []Risk {
 // GetRisk returns a risk with the given ID
 func (s *service) GetRisk(riskID string) (Risk, error) {
 	r, err := s.r.GetRisk(riskID)
-	if err != nil {
-		config.Logger.Println(err)
-	}
 	return r, err
 }
 
