@@ -70,6 +70,7 @@ func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.HandlerFun
 		rm := adding.RiskMatrix{Project: name, Path: filename}
 		err = a.AddRiskMatrix(rm)
 		if err != nil {
+			config.Logger.Println(err)
 			utils.RenderTemplate(w, "templates/add.gohtml", fmt.Sprintf("There was an internal error."))
 			return
 		}
@@ -257,6 +258,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 		// adding risks
 		err = a.AddRisk(newRisks...)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

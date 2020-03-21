@@ -1,9 +1,5 @@
 package adding
 
-import (
-	"github.com/ottotech/riskmanagement/pkg/config"
-)
-
 // Service provides risk matrix and risk adding operations
 type Service interface {
 	AddRiskMatrix(...RiskMatrix) error
@@ -32,7 +28,6 @@ func (s *service) AddRiskMatrix(rm ...RiskMatrix) error {
 	for _, matrix := range rm {
 		err := s.rmR.AddRiskMatrix(matrix)
 		if err != nil {
-			config.Logger.Println(err)
 			return err
 		}
 	}
@@ -44,7 +39,6 @@ func (s *service) AddRisk(r ...Risk) error {
 	for _, risk := range r {
 		err := s.rmR.AddRisk(risk)
 		if err != nil {
-			config.Logger.Println(err)
 			return err
 		}
 	}
