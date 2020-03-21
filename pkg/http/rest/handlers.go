@@ -45,7 +45,7 @@ func (h *ListMatrix) Handler(s listing.Service) http.HandlerFunc {
 			return
 		}
 		list := s.GetAllRiskMatrix()
-		utils.RenderTemplate(w, "list.gohtml", list)
+		utils.RenderTemplate(w, "templates/list.gohtml", list)
 		return
 	}
 }
@@ -56,13 +56,13 @@ type AddMatrix struct {
 func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			utils.RenderTemplate(w, "add.gohtml", nil)
+			utils.RenderTemplate(w, "templates/add.gohtml", nil)
 			return
 		}
 		var err error
 		name := r.PostFormValue("project")
 		if name == "" {
-			utils.RenderTemplate(w, "add.gohtml", "Error: You need to specify the project name.")
+			utils.RenderTemplate(w, "templates/add.gohtml", "Error: You need to specify the project name.")
 			return
 		}
 		t := time.Now().Format("02_01_2006_03_04_05")
@@ -70,19 +70,19 @@ func (h *AddMatrix) Handler(a adding.Service, l listing.Service) http.HandlerFun
 		rm := adding.RiskMatrix{Project: name, Path: filename}
 		err = a.AddRiskMatrix(rm)
 		if err != nil {
-			utils.RenderTemplate(w, "add.gohtml", fmt.Sprintf("There was an internal error."))
+			utils.RenderTemplate(w, "templates/add.gohtml", fmt.Sprintf("There was an internal error."))
 			return
 		}
 		newRm, err := l.GetRiskMatrixByPath(filename)
 		if err != nil {
-			utils.RenderTemplate(w, "add.gohtml", fmt.Sprintf("There was an internal error."))
+			utils.RenderTemplate(w, "templates/add.gohtml", fmt.Sprintf("There was an internal error."))
 			return
 		}
 		// TODO: What happens if we add the risk matrix data but we cannot draw the risk matrix
 		// TODO: for some reason?
 		err = draw.RiskMatrixDrawer(filename, newRm, []adding.Risk{})
 		if err != nil {
-			utils.RenderTemplate(w, "add.gohtml", err.Error())
+			utils.RenderTemplate(w, "templates/add.gohtml", err.Error())
 			return
 		}
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -451,7 +451,7 @@ func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
 			}
 
 			// render tpl
-			utils.RenderTemplate(w, "detail.gohtml", ctx)
+			utils.RenderTemplate(w, "templates/detail.gohtml", ctx)
 			return
 		}
 	}
@@ -493,7 +493,7 @@ type AddMediaPath struct {
 func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			utils.RenderTemplate(w, "mediapath.gohtml", nil)
+			utils.RenderTemplate(w, "templates/mediapath.gohtml", nil)
 			return
 		}
 		if r.Method == http.MethodPost {
@@ -504,13 +504,13 @@ func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
 			mediaPath := r.PostForm.Get("mediapath")
 			if mediaPath == "" {
 				requestError := "You need to specify a valid path."
-				utils.RenderTemplate(w, "mediapath.gohtml", requestError)
+				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
 				return
 			}
 			mediaPath = filepath.Clean(mediaPath)
 			if _, err := os.Stat(mediaPath); os.IsNotExist(err) {
 				requestError := "You need to specify a valid path."
-				utils.RenderTemplate(w, "mediapath.gohtml", requestError)
+				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
 				return
 			}
 			f, err := os.Open(mediaPath)
@@ -533,7 +533,7 @@ func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
 			}
 			if !fi.IsDir() {
 				requestError := "You need to specify a valid path to folder, not to a file."
-				utils.RenderTemplate(w, "mediapath.gohtml", requestError)
+				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
 				return
 			}
 			err = adder.SaveMediaPath(mediaPath)
