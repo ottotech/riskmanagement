@@ -502,13 +502,25 @@ func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
 type Media struct {
 }
 
-func (h *Media) Handler() http.Handler {
+func (h *Media) Handler(lister listing.Service) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ct := "image/png"
-		fullPath := r.URL.Path
 		w.Header().Add("Content-Type", ct)
 
-		f, err := os.Open(strings.TrimLeft(fullPath, "/"))
+		idx := strings.LastIndex(r.URL.Path, "/")
+		filename := r.URL.Path[idx+1:]
+		mediaPath, err := lister.GetMediaPath()
+		if err != nil {
+			if os.IsNotExist(err) {
+				http.Error(w, http.StatusText(404), http.StatusNotFound)
+				return
+			}
+			config.Logger.Println(err)
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			return
+		}
+		fullPath := filepath.Join(mediaPath, filename)
+		f, err := os.Open(fullPath)
 		if err != nil {
 			http.Error(w, "file not found", http.StatusNotFound)
 			return

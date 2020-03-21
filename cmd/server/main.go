@@ -77,7 +77,7 @@ func main() {
 	mux.Handle("/delete-risks", mw.Chain(app.DeleteRisk.Handler(deleter, lister), mw.MediaPathRequired(lister)))
 	mux.Handle("/delete-risk-matrix", mw.Chain(app.DeleteRiskMatrix.Handler(deleter, lister), mw.MediaPathRequired(lister)))
 	mux.Handle("/set-media-path", app.AddMediaPath.Handler(adder))
-	mux.Handle("/media/", app.Media.Handler())
+	mux.Handle("/media/", app.Media.Handler(lister))
 	mux.Handle("/shutdown", shutDownHandler(shutDownSignal))
 	mux.Handle("/favicon.ico", http.NotFoundHandler())
 	server := http.Server{
