@@ -574,7 +574,7 @@ func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
 				return
 			}
 			if !fi.IsDir() {
-				requestError := "You need to specify a valid path to folder, not to a file."
+				requestError := "You need to specify a valid path to a folder, not to a file."
 				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
 				return
 			}
