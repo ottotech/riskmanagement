@@ -1,7 +1,5 @@
 package deleting
 
-import "github.com/ottotech/riskmanagement/pkg/config"
-
 // Service provides risk matrix and risk deleting operations
 type Service interface {
 	DeleteRisk(...string) error
@@ -28,7 +26,6 @@ func (s *service) DeleteRisk(riskIDs ...string) error {
 	for _, id := range riskIDs {
 		err := s.r.DeleteRisk(id)
 		if err != nil {
-			config.Logger.Println(err)
 			return err
 		}
 	}
@@ -40,7 +37,6 @@ func (s *service) DeleteRiskMatrix(riskMatrixIDs ...int) error {
 	for _, id := range riskMatrixIDs {
 		err := s.r.DeleteRiskMatrix(id)
 		if err != nil {
-			config.Logger.Println(err)
 			return err
 		}
 	}

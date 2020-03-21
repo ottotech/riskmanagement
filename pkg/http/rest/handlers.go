@@ -131,6 +131,7 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		// delete the risk matrix
 		err = d.DeleteRiskMatrix(id)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -159,6 +160,7 @@ func (h *DeleteRiskMatrix) Handler(d deleting.Service, l listing.Service) http.H
 		}
 		err = d.DeleteRisk(risksIDs...)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -405,6 +407,7 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 		// delete the risk
 		err = d.DeleteRisk(id)
 		if err != nil {
+			config.Logger.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
