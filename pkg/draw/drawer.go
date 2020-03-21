@@ -1,7 +1,6 @@
 package draw
 
 import (
-	"errors"
 	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/config"
 	"github.com/ottotech/riskmanagement/pkg/listing"
@@ -19,7 +18,7 @@ func RiskMatrixDrawer(pathToDraw string, m listing.RiskMatrix, risks []adding.Ri
 	myImg := image.NewRGBA(image.Rect(0, 0, m.MatImgWidth, m.MatImgHeight))
 	outputFile, err := os.Create(pathToDraw)
 	if err != nil {
-		return errors.New("we couldn't create the base risk matrix")
+		return err
 	}
 	defer func() {
 		err = outputFile.Close()
@@ -146,7 +145,7 @@ func RiskMatrixDrawer(pathToDraw string, m listing.RiskMatrix, risks []adding.Ri
 
 	// create image
 	if err = png.Encode(outputFile, myImg); err != nil {
-		return errors.New("we couldn't save the base risk matrix")
+		return err
 	}
 
 	return nil
