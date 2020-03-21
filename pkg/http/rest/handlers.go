@@ -184,7 +184,7 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 		postData := r.PostFormValue("data")
 		err := json.Unmarshal([]byte(postData), &risks)
 		if err != nil {
-			log.Println(err)
+			config.Logger.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte(err.Error()))
 			return
@@ -432,8 +432,19 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 		}
 
 		// draw risk matrix again in order to not show the deleted risks
-		_ = draw.RiskMatrixDrawer(riskMatrix.Path, riskMatrix, risks)
-
+		mediaPath, err := l.GetMediaPath()
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		pathToDraw := filepath.Join(mediaPath, riskMatrix.Path)
+		err = draw.RiskMatrixDrawer(pathToDraw, riskMatrix, risks)
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// if all goes well we return response 200
 		w.WriteHeader(http.StatusOK)
 	}
