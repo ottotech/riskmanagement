@@ -4,3 +4,4 @@
 /media/*.png
 data
 config.json
+error.log
