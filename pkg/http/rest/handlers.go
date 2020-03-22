@@ -544,10 +544,18 @@ func (h *Media) Handler(lister listing.Service) http.Handler {
 type AddMediaPath struct {
 }
 
-func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
+func (h *AddMediaPath) Handler(adder adding.Service, lister listing.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			utils.RenderTemplate(w, "templates/mediapath.gohtml", nil)
+			ctx := struct {
+				Error, MediaPath string
+			}{
+				Error: "",
+			}
+			if mediaPath, err := lister.GetMediaPath(); err == nil {
+				ctx.MediaPath = mediaPath
+			}
+			utils.RenderTemplate(w, "templates/mediapath.gohtml", ctx)
 			return
 		}
 		if r.Method == http.MethodPost {
@@ -555,16 +563,20 @@ func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
 				http.Error(w, http.StatusText(500), http.StatusInternalServerError)
 				return
 			}
+			ctx := struct {
+				Error, MediaPath string
+			}{}
 			mediaPath := r.PostForm.Get("mediapath")
 			if mediaPath == "" {
-				requestError := "You need to specify a valid path."
-				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
+				ctx.Error = "You need to specify a valid path."
+				utils.RenderTemplate(w, "templates/mediapath.gohtml", ctx)
 				return
 			}
 			mediaPath = filepath.Clean(mediaPath)
 			if _, err := os.Stat(mediaPath); os.IsNotExist(err) {
-				requestError := "You need to specify a valid path."
-				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
+				ctx.Error = "The path you provided does not exist."
+				ctx.MediaPath = r.PostForm.Get("mediapath")
+				utils.RenderTemplate(w, "templates/mediapath.gohtml", ctx)
 				return
 			}
 			f, err := os.Open(mediaPath)
@@ -586,8 +598,9 @@ func (h *AddMediaPath) Handler(adder adding.Service) http.HandlerFunc {
 				return
 			}
 			if !fi.IsDir() {
-				requestError := "You need to specify a valid path to a folder, not to a file."
-				utils.RenderTemplate(w, "templates/mediapath.gohtml", requestError)
+				ctx.Error = "You need to specify a valid path to a folder, not to a file."
+				ctx.MediaPath = r.PostForm.Get("mediapath")
+				utils.RenderTemplate(w, "templates/mediapath.gohtml", ctx)
 				return
 			}
 			err = adder.SaveMediaPath(mediaPath)

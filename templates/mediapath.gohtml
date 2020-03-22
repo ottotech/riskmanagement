@@ -13,7 +13,8 @@
     </style>
 </head>
 <body>
-{{$Error := .}} <!-- Cool stuff -->
+{{$Error := .Error}}
+{{$MediaPath := .MediaPath}}
 <div class="centered">
     {{template "shutdown"}}
     <h3>Add media path:</h3>
@@ -22,7 +23,7 @@
     {{end}}
     <form action="/set-media-path" method="post" autocomplete="off">
         <label for="mediapath">Set media path:</label>
-        <input style="width: 700px" id="mediapath" type="text" name="mediapath">
+        <input value="{{$MediaPath}}" style="width: 700px" id="mediapath" type="text" name="mediapath">
         <button type="submit">Set</button>
     </form>
 </div>
