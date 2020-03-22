@@ -8,8 +8,6 @@ import (
 	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/listing"
 	"image/color"
-	"path"
-	"runtime"
 	"strconv"
 	"time"
 )
@@ -38,7 +36,7 @@ var (
 
 const (
 	// dir defines the name of the directory where the files are stored
-	dir = "/data/"
+	dir = "./data/"
 	// CollectionRisk identifier for the JSON collection of risks
 	CollectionRisk = "risks"
 	// CollectionMatrix identifier for the JSON collection of matrix
@@ -58,9 +56,7 @@ type Storage struct {
 func NewStorage() (*Storage, error) {
 	var err error
 	s := new(Storage)
-	_, filename, _, _ := runtime.Caller(0)
-	p := path.Dir(filename)
-	s.db, err = scribble.New(p+dir, nil)
+	s.db, err = scribble.New(dir, nil)
 	if err != nil {
 		return nil, err
 	}
