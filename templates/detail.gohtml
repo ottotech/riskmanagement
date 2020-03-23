@@ -28,6 +28,10 @@
         .not-allowed {
             cursor: not-allowed;
         }
+        .highlight td {
+            border-color: rgba(255, 204, 34, 0.97);
+            border-width: 2px;
+        }
     </style>
 </head>
 <body>
@@ -41,8 +45,7 @@
     <p style="margin: 0">{{$RiskMatrix.Project}}</p>
     <br>
     <a id="jsCreate">Add risk in Risk Matrix</a>
-    <br>
-    <a id="jsSave">Save</a>
+    <a style="margin-left: 10px" id="jsSave">Save</a>
     <input tabindex="-1" id="js_risk_matrix_id" hidden value="{{$RiskMatrix.ID}}">
     <table id="myTable">
         <tr>
@@ -56,9 +59,9 @@
         {{if gt (len $Risks) 0 }}
             {{range $Risks}}
                 <tr>
-                    <td><input disabled value="{{.Name}}"></td>
-                    <td><input disabled value="{{.Probability}}"></td>
-                    <td><input disabled value="{{.Impact}}"></td>
+                    <td><input disabled class="not-allowed" value="{{.Name}}"></td>
+                    <td><input disabled class="not-allowed" value="{{.Probability}}"></td>
+                    <td><input disabled class="not-allowed" value="{{.Impact}}"></td>
                     <td><input disabled class="not-allowed" value="{{.Classification}}"></td>
                     <td><textarea disabled rows="4">{{.Strategy}}</textarea></td>
                     <td><a class="delete" data-state="old" data-risk-id="{{.ID}}">delete</a></td>
@@ -94,6 +97,8 @@ document.querySelectorAll(".delete").forEach(item => {
         let table = document.getElementById("myTable");
         // insert new row
         let newRow = table.insertRow(-1);
+        // let's style the new row
+        newRow.className = "highlight";
         // get cells
         let cell1 = newRow.insertCell(0);
         let cell2 = newRow.insertCell(1);
