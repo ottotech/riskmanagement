@@ -12,6 +12,11 @@
 {{$RiskMatrixList := .}} <!-- Cool stuff -->
 <div class="centered">
     {{template "shutdown"}}
+    <div style="margin-bottom: 10px; margin-top: 10px">
+        <form action="/set-media-path" method="get" class="float-right" style="margin:0px; padding:0px; display:inline-block;">
+            <button type="submit" class="btn btn-link" style="padding: 0px; margin:0px; display: inline-block">Update media path</button>
+        </form>
+    </div>
     <h3>List of Projects:</h3>
     {{if gt (len $RiskMatrixList) 0 }}
         <ul style="list-style: none;">

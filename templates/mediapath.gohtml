@@ -17,6 +17,9 @@
 {{$MediaPath := .MediaPath}}
 <div class="centered">
     {{template "shutdown"}}
+    {{if $MediaPath}}
+        <a href="/">Return</a>
+    {{end}}
     <h3>Add media path:</h3>
     {{if $Error }}
         <p class="error">{{$Error}}</p>

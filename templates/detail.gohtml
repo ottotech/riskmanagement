@@ -6,7 +6,6 @@
     <meta name="text" content="">
     <meta name="author" content="Otto Schuldt">
     <title>Risk Assessment APP</title>
-    <link rel="shortcut icon" href="/style/images/favicon.png">
     <style>
         table, th, td {
             border: 1px solid black;
@@ -14,6 +13,7 @@
         table {
             border-collapse: collapse;
             width: 500px;
+            margin-bottom: 10px;
         }
         th, tr {
             height: 20px;
@@ -25,6 +25,9 @@
         a:hover {
             color: #00A8FF;
         }
+        .not-allowed {
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -32,16 +35,14 @@
 {{$Risks := .Risks}} <!-- Cool stuff -->
 <div class="centered">
     {{template "shutdown"}}
-    <h2>RISK MATRIX DETAIL</h2>
-    <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="{{$RiskMatrix.MatImgWidth}}" height="{{$RiskMatrix.MatImgHeight}}">
-    <h3>Project name:</h3>
-    <p>{{$RiskMatrix.Project}}</p>
-    <br>
     <a href="/">Return</a>
+    <h2>RISK MATRIX DETAIL</h2>
+    <h3>Project name:</h3>
+    <p style="margin: 0">{{$RiskMatrix.Project}}</p>
     <br>
-    <a onclick="handleRiskCreation()">Add risk in Risk Matrix</a>
+    <a id="jsCreate">Add risk in Risk Matrix</a>
     <br>
-    <a id="js_save" onclick="handleRisksSave(event)">Save</a>
+    <a id="jsSave">Save</a>
     <input tabindex="-1" id="js_risk_matrix_id" hidden value="{{$RiskMatrix.ID}}">
     <table id="myTable">
         <tr>
@@ -58,28 +59,48 @@
                     <td><input disabled value="{{.Name}}"></td>
                     <td><input disabled value="{{.Probability}}"></td>
                     <td><input disabled value="{{.Impact}}"></td>
-                    <td><input disabled value="{{.Classification}}"></td>
-                    <td><input disabled value="{{.Strategy}}"></td>
-                    <td><a onclick="handleRiskDelete(event)" data-risk-id="{{.ID}}">delete</a></td>
+                    <td><input disabled class="not-allowed" value="{{.Classification}}"></td>
+                    <td><textarea disabled rows="4">{{.Strategy}}</textarea></td>
+                    <td><a class="delete" data-state="old" data-risk-id="{{.ID}}">delete</a></td>
                 </tr>
             {{end}}
         {{end}}
     </table>
+    <img src="/media/{{$RiskMatrix.Path}}" alt="Risk Matrix" width="{{$RiskMatrix.MatImgWidth}}" height="{{$RiskMatrix.MatImgHeight}}">
 </div>
 
 <script>
+// Let's add the event listeners to DOM elements.
+document.getElementById("jsSave").addEventListener("click", function (event) {
+    event.preventDefault();
+    handleRisksSave(event)
+});
+
+document.getElementById("jsCreate").addEventListener("click", function (event) {
+    event.preventDefault();
+    handleRiskCreation()
+});
+
+document.querySelectorAll(".delete").forEach(item => {
+    item.addEventListener("click", function (event) {
+        event.preventDefault();
+        handleRiskDelete(event)
+    })
+});
+
+
     function handleRiskCreation() {
         // get table
         let table = document.getElementById("myTable");
-        // insert/get new row
+        // insert new row
         let newRow = table.insertRow(-1);
-        // insert/get cells
+        // get cells
         let cell1 = newRow.insertCell(0);
         let cell2 = newRow.insertCell(1);
         let cell3 = newRow.insertCell(2);
         let cell4 = newRow.insertCell(3);
         let cell5 = newRow.insertCell(4);
-        let list = [cell1, cell2, cell3, cell4, cell5];
+        let list = [cell1, cell2, cell3, cell4];
         // append input into cells
         for (let i = 0; i < list.length; i++) {
             // create input element
@@ -89,23 +110,29 @@
             // on cell4 (risk classification) we disable the cell
             if (i === 3) {
                 input.disabled = true;
+                input.className = "not-allowed"
             }
             // append input into cell
             list[i].appendChild(input);
         }
 
-        // in cell6 we will add a custom msg
+        // in cell5 we will add a "textarea"
+        let textareaEl = document.createElement("textarea");
+        textareaEl.rows = 4;
+        cell5.appendChild(textareaEl);
+
+        // in cell6 we will add the delete element ("<a>") with the corresponding event listener
         let cell6 = newRow.insertCell(5);
-        cell6.innerText = "save & refresh if you want to see the delete option";
-
-
-        // after expanding the table we go to the end of page.
-        // We might want to change this behavior when improving the UI.
-        window.scrollTo(0,document.body.scrollHeight);
+        let deleteEl = document.createElement("a");
+        deleteEl.setAttribute("data-state", "new");
+        deleteEl.setAttribute("data-risk-id", "");
+        deleteEl.className = "delete";
+        deleteEl.innerText = "delete";
+        deleteEl.addEventListener("click", handleRiskDelete)
+        cell6.appendChild(deleteEl);
     }
 
     function handleRisksSave(e) {
-        e.preventDefault();
         // get table
         let table = document.getElementById("myTable");
         let rows = table.rows;
@@ -164,8 +191,15 @@
     }
 
     function handleRiskDelete(e) {
-        e.preventDefault();
         let riskID = e.target.getAttribute("data-risk-id");
+        let state = e.target.getAttribute("data-state");
+
+        // when the risk is new and is not saved in the storage.
+        // It is safe to remove the row.
+        if (state === "new") {
+            e.target.parentElement.parentElement.remove();
+            return
+        }
 
         // make AJAX request
         let xhr = new XMLHttpRequest();
