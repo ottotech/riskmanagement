@@ -10,8 +10,8 @@ type Risk struct {
 	Strategy       string
 }
 
-// ByAge implements sort.Interface for []Person based on
-// the Age field.
+// ByName implements sort.Interface for []Risk based on
+// the Name field.
 type ByName []Risk
 
 func (n ByName) Len() int           { return len(n) }
