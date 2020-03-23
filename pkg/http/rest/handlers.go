@@ -15,6 +15,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -482,6 +483,9 @@ func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
 
 			// get all risks
 			risks := s.GetAllRisks(riskMatrix.ID)
+
+			// Let's sort the risks by name.
+			sort.Sort(listing.ByName(risks))
 
 			// build context
 			ctx := struct {
