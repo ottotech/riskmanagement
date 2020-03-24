@@ -76,7 +76,7 @@
 // Let's add the event listeners to DOM elements.
 document.getElementById("jsSave").addEventListener("click", function (event) {
     event.preventDefault();
-    handleRisksSave(event)
+    handleRisksSave()
 });
 
 document.getElementById("jsCreate").addEventListener("click", function (event) {
@@ -95,15 +95,16 @@ function handleProbabilityAndImpact(event) {
     let inputVal = event.target.value;
     let charCode = event.keyCode;
     let DEL = event.key === "Backspace";
+    let TAB = event.key === "Tab";
     if (DEL) {
         return;
     }
-    if (inputVal !== "") {
+    if (inputVal !== "" && !TAB) {
         event.preventDefault();
         return
     }
-    // allowedCharCodes accept numbers 1 < x > 3
-    const allowedCharCodes = [49, 50, 51];
+    // allowedCharCodes accept numbers 1 < x > 3, and Tab keyCode
+    const allowedCharCodes = [49, 50, 51, 9];
     if (!allowedCharCodes.includes(charCode)) {
         event.preventDefault();
     }
@@ -127,7 +128,6 @@ function handleRiskCreation() {
     // in cell1 (risk) we disable the cell
     let input1 = document.createElement("INPUT");
     input1.type = "text";
-    input1.onkeydown = handleProbabilityAndImpact;
     cell1.appendChild(input1);
 
     // in cell2 (risk probability) we disable the cell
@@ -171,7 +171,7 @@ function handleRiskCreation() {
     cell6.appendChild(deleteEl);
 }
 
-function handleRisksSave(e) {
+function handleRisksSave() {
         // get table
         let table = document.getElementById("myTable");
         let rows = table.rows;
