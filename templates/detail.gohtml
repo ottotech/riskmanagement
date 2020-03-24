@@ -91,53 +91,87 @@ document.querySelectorAll(".delete").forEach(item => {
     })
 });
 
-
-    function handleRiskCreation() {
-        // get table
-        let table = document.getElementById("myTable");
-        // insert new row
-        let newRow = table.insertRow(1);
-        // let's style the new row
-        newRow.className = "highlight";
-        // get cells
-        let cell1 = newRow.insertCell(0);
-        let cell2 = newRow.insertCell(1);
-        let cell3 = newRow.insertCell(2);
-        let cell4 = newRow.insertCell(3);
-        let cell5 = newRow.insertCell(4);
-        let list = [cell1, cell2, cell3, cell4];
-        // append input into cells
-        for (let i = 0; i < list.length; i++) {
-            // create input element
-            let input = document.createElement("INPUT");
-            // define input type
-            input.type = "text";
-            // on cell4 (risk classification) we disable the cell
-            if (i === 3) {
-                input.disabled = true;
-                input.className = "not-allowed"
-            }
-            // append input into cell
-            list[i].appendChild(input);
-        }
-
-        // in cell5 we will add a "textarea"
-        let textareaEl = document.createElement("textarea");
-        textareaEl.rows = 4;
-        cell5.appendChild(textareaEl);
-
-        // in cell6 we will add the delete element ("<a>") with the corresponding event listener
-        let cell6 = newRow.insertCell(5);
-        let deleteEl = document.createElement("a");
-        deleteEl.setAttribute("data-state", "new");
-        deleteEl.setAttribute("data-risk-id", "");
-        deleteEl.className = "delete";
-        deleteEl.innerText = "delete";
-        deleteEl.addEventListener("click", handleRiskDelete)
-        cell6.appendChild(deleteEl);
+function handleProbabilityAndImpact(event) {
+    let inputVal = event.target.value;
+    let charCode = event.keyCode;
+    let DEL = event.key === "Backspace";
+    if (DEL) {
+        return;
     }
+    if (inputVal !== "") {
+        event.preventDefault();
+        return
+    }
+    // allowedCharCodes accept numbers 1 < x > 3
+    const allowedCharCodes = [49, 50, 51];
+    if (!allowedCharCodes.includes(charCode)) {
+        event.preventDefault();
+    }
+}
 
-    function handleRisksSave(e) {
+
+function handleRiskCreation() {
+    // get table
+    let table = document.getElementById("myTable");
+    // insert new row
+    let newRow = table.insertRow(1);
+    // let's style the new row
+    newRow.className = "highlight";
+    // get cells
+    let cell1 = newRow.insertCell(0);
+    let cell2 = newRow.insertCell(1);
+    let cell3 = newRow.insertCell(2);
+    let cell4 = newRow.insertCell(3);
+    let cell5 = newRow.insertCell(4);
+
+    // in cell1 (risk) we disable the cell
+    let input1 = document.createElement("INPUT");
+    input1.type = "text";
+    input1.onkeydown = handleProbabilityAndImpact;
+    cell1.appendChild(input1);
+
+    // in cell2 (risk probability) we disable the cell
+    let input2 = document.createElement("INPUT");
+    input2.type = "text";
+    input2.onkeydown = handleProbabilityAndImpact;
+    input2.onpaste = function (e) {
+        e.preventDefault()
+    };
+    cell2.appendChild(input2);
+
+    // in cell3 (risk impact) we disable the cell
+    let input3 = document.createElement("INPUT");
+    input3.type = "text";
+    input3.onkeydown = handleProbabilityAndImpact;
+    input3.onpaste = function (e) {
+        e.preventDefault()
+    };
+    cell3.appendChild(input3);
+
+    // in cell4 (risk classification) we disable the cell
+    let input4 = document.createElement("INPUT");
+    input4.type = "text";
+    input4.disabled = true;
+    input4.className = "not-allowed";
+    cell4.appendChild(input4);
+
+    // in cell5 we will add a "textarea"
+    let textareaEl = document.createElement("textarea");
+    textareaEl.rows = 4;
+    cell5.appendChild(textareaEl);
+
+    // in cell6 we will add the delete element ("<a>") with the corresponding event listener
+    let cell6 = newRow.insertCell(5);
+    let deleteEl = document.createElement("a");
+    deleteEl.setAttribute("data-state", "new");
+    deleteEl.setAttribute("data-risk-id", "");
+    deleteEl.className = "delete";
+    deleteEl.innerText = "delete";
+    deleteEl.addEventListener("click", handleRiskDelete);
+    cell6.appendChild(deleteEl);
+}
+
+function handleRisksSave(e) {
         // get table
         let table = document.getElementById("myTable");
         let rows = table.rows;
@@ -193,9 +227,9 @@ document.querySelectorAll(".delete").forEach(item => {
         formData.append("data", JSON.stringify(list));
         xhr.open("POST", '/add-risks');
         xhr.send(formData);
-    }
+}
 
-    function handleRiskDelete(e) {
+function handleRiskDelete(e) {
         let riskID = e.target.getAttribute("data-risk-id");
         let state = e.target.getAttribute("data-state");
 
@@ -228,7 +262,7 @@ document.querySelectorAll(".delete").forEach(item => {
         formData.append("risk_id", riskID);
         xhr.open("POST", '/delete-risks');
         xhr.send(formData);
-    }
+}
 </script>
 
 </body>
