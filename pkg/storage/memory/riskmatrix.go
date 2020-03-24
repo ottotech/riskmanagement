@@ -1,11 +1,15 @@
 package memory
 
-import "image/color"
+import (
+	"image/color"
+	"time"
+)
 
 type RiskMatrix struct {
 	ID              int
 	Path            string
 	Project         string
+	DateCreated     time.Time
 	MatImgWidth     int
 	MatImgHeight    int
 	MatNrRows       int

@@ -1,11 +1,15 @@
 package json
 
-import "image/color"
+import (
+	"image/color"
+	"time"
+)
 
 type RiskMatrix struct {
 	ID              int        `json:"id"`
 	Path            string     `json:"path"`
 	Project         string     `json:"project"`
+	DateCreated     time.Time  `json:"date_created"`
 	MatImgWidth     int        `json:"mat_img_width"`
 	MatImgHeight    int        `json:"mat_img_height"`
 	MatNrRows       int        `json:"mat_nr_rows"`

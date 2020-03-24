@@ -6,7 +6,6 @@
     <meta name="text" content="">
     <meta name="author" content="Otto Schuldt">
     <title>Risk Assessment APP</title>
-    <link rel="shortcut icon" href="/style/images/favicon.png">
 </head>
 <body>
 {{$RiskMatrixList := .}} <!-- Cool stuff -->
@@ -17,18 +16,20 @@
             <button type="submit" class="btn btn-link" style="padding: 0px; margin:0px; display: inline-block">Update media path</button>
         </form>
     </div>
+    <a href="/add">Create new risk matrix?</a>
     <h3>List of Projects:</h3>
     {{if gt (len $RiskMatrixList) 0 }}
         <ul style="list-style: none;">
             {{range $RiskMatrixList}}
-                <li><a href="/get/{{.ID}}">{{.Project}}</a> <a href="#" onclick="handleRiskMatrixDelete(event)" data-risk-matrix-id="{{.ID}}">delete</a></li>
+                <li>
+                    <a style="text-decoration: none;" href="/get/{{.ID}}"><strong>Project name: </strong> {{.Project}} <strong>Date created: </strong>  {{.DateCreated.Format "2006/01/02"}}</a> <a href="#" onclick="handleRiskMatrixDelete(event)" data-risk-matrix-id="{{.ID}}">delete</a>
+                </li>
             {{end}}
         </ul>
     {{else}}
         <p style="color: red">There are no risk matrix registered.</p>
     {{end}}
     <br>
-    <a href="/add">Create new risk matrix?</a>
 </div>
 
 <script>

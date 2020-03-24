@@ -62,6 +62,7 @@ func (m *Storage) AddRiskMatrix(rm adding.RiskMatrix) error {
 		ID:              len(m.riskMatrixSlice) + 1,
 		Path:            rm.Path,
 		Project:         rm.Project,
+		DateCreated:     time.Now(),
 		MatImgWidth:     imWidth,
 		MatImgHeight:    imHeight,
 		MatNrRows:       matrixNrRows,
@@ -165,6 +166,7 @@ func (m *Storage) GetRiskMatrixByPath(p string) (listing.RiskMatrix, error) {
 			riskMatrix.ID = m.riskMatrixSlice[i].ID
 			riskMatrix.Path = m.riskMatrixSlice[i].Path
 			riskMatrix.Project = m.riskMatrixSlice[i].Project
+			riskMatrix.DateCreated = m.riskMatrixSlice[i].DateCreated
 			riskMatrix.MatImgWidth = m.riskMatrixSlice[i].MatImgWidth
 			riskMatrix.MatImgHeight = m.riskMatrixSlice[i].MatImgHeight
 			riskMatrix.MatNrRows = m.riskMatrixSlice[i].MatNrRows
@@ -195,6 +197,7 @@ func (m *Storage) GetAllRiskMatrix() []listing.RiskMatrix {
 			ID:              m.riskMatrixSlice[i].ID,
 			Path:            m.riskMatrixSlice[i].Path,
 			Project:         m.riskMatrixSlice[i].Project,
+			DateCreated:     m.riskMatrixSlice[i].DateCreated,
 			MatImgWidth:     m.riskMatrixSlice[i].MatImgWidth,
 			MatImgHeight:    m.riskMatrixSlice[i].MatImgHeight,
 			MatNrRows:       m.riskMatrixSlice[i].MatNrRows,
