@@ -192,7 +192,11 @@ func (h *AddRisk) Handler(a adding.Service, l listing.Service, u updating.Servic
 			_, _ = w.Write([]byte(err.Error()))
 			return
 		}
-
+		// check if risks exist, otherwise return 400
+		if len(risks) == 0 {
+			http.Error(w, "You need to provide some data.", http.StatusBadRequest)
+			return
+		}
 		// anonymous func that returns the risk classification
 		riskClassifier := func(r adding.Risk) (string, bool) {
 			if r.Probability == 3 && r.Impact == 1 {
