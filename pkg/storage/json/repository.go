@@ -262,6 +262,9 @@ func (s *Storage) GetAllRisks(riskMatrixID int) []listing.Risk {
 			// err handling omitted for simplicity
 			return list
 		}
+		if risk.RiskMatrixID != riskMatrixID {
+			continue
+		}
 		listingRisk.ID = risk.ID
 		listingRisk.RiskMatrixID = risk.RiskMatrixID
 		listingRisk.Name = risk.Name

@@ -457,7 +457,7 @@ func (h *DeleteRisk) Handler(d deleting.Service, l listing.Service) http.Handler
 type GetMatrix struct {
 }
 
-func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
+func (h *GetMatrix) Handler(lister listing.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			// clean path to get RiskMatrix ID
@@ -474,7 +474,7 @@ func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
 			}
 
 			// get risk matrix
-			riskMatrix, err := s.GetRiskMatrix(id)
+			riskMatrix, err := lister.GetRiskMatrix(id)
 			if err != nil {
 				config.Logger.Println(err)
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -482,7 +482,7 @@ func (h *GetMatrix) Handler(s listing.Service) http.HandlerFunc {
 			}
 
 			// get all risks
-			risks := s.GetAllRisks(riskMatrix.ID)
+			risks := lister.GetAllRisks(riskMatrix.ID)
 
 			// Let's sort the risks by name.
 			sort.Sort(listing.ByName(risks))

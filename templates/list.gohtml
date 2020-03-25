@@ -6,6 +6,21 @@
     <meta name="text" content="">
     <meta name="author" content="Otto Schuldt">
     <title>Risk Assessment APP</title>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        a {
+            color: #0f3e68;
+            cursor: pointer;
+        }
+        a:hover {
+            color: #00A8FF;
+        }
+        .delete {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 {{$RiskMatrixList := .}} <!-- Cool stuff -->
@@ -16,13 +31,13 @@
             <button type="submit" class="btn btn-link" style="padding: 0px; margin:0px; display: inline-block">Update media path</button>
         </form>
     </div>
-    <a href="/add">Create new risk matrix?</a>
+    <a class="adder" href="/add">Create new risk matrix?</a>
     <h3>List of Projects:</h3>
     {{if gt (len $RiskMatrixList) 0 }}
-        <ul style="list-style: none;">
+        <ul>
             {{range $RiskMatrixList}}
-                <li>
-                    <a style="text-decoration: none;" href="/get/{{.ID}}"><strong>Project name: </strong> {{.Project}} <strong>Date created: </strong>  {{.DateCreated.Format "2006/01/02"}}</a> <a href="#" class="delete" data-project-name="{{.Project}}" data-risk-matrix-id="{{.ID}}">delete</a>
+                <li style="margin-bottom: 4px">
+                    <a class="deleteLink" href="/get/{{.ID}}"><strong>Project name: </strong> {{.Project}} <strong>Date created: </strong>  {{.DateCreated.Format "2006/01/02"}}</a> <a href="#" class="delete" data-project-name="{{.Project}}" data-risk-matrix-id="{{.ID}}">delete</a>
                 </li>
             {{end}}
         </ul>
