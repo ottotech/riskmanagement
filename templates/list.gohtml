@@ -22,7 +22,7 @@
         <ul style="list-style: none;">
             {{range $RiskMatrixList}}
                 <li>
-                    <a style="text-decoration: none;" href="/get/{{.ID}}"><strong>Project name: </strong> {{.Project}} <strong>Date created: </strong>  {{.DateCreated.Format "2006/01/02"}}</a> <a href="#" onclick="handleRiskMatrixDelete(event)" data-risk-matrix-id="{{.ID}}">delete</a>
+                    <a style="text-decoration: none;" href="/get/{{.ID}}"><strong>Project name: </strong> {{.Project}} <strong>Date created: </strong>  {{.DateCreated.Format "2006/01/02"}}</a> <a href="#" class="delete" data-project-name="{{.Project}}" data-risk-matrix-id="{{.ID}}">delete</a>
                 </li>
             {{end}}
         </ul>
@@ -33,32 +33,44 @@
 </div>
 
 <script>
-    function handleRiskMatrixDelete(e) {
-        e.preventDefault();
-        let riskMatrixID = e.target.getAttribute("data-risk-matrix-id");
+document.querySelectorAll(".delete").forEach(item => {
+   item.addEventListener("click", function (event) {
+        handleRiskMatrixDelete(event)
+   })
+});
 
-        // make AJAX request
-        let xhr = new XMLHttpRequest();
-        let formData = new FormData();
+function handleRiskMatrixDelete(e) {
+    e.preventDefault();
+    let riskMatrixID = e.target.getAttribute("data-risk-matrix-id");
+    let projectName = e.target.getAttribute("data-project-name");
 
-        // handle response
-        xhr.onreadystatechange = function () {
-            if(xhr.readyState === XMLHttpRequest.DONE){
-                if (xhr.status === 200){
-                    console.log("SUCCESS");
-                    window.location = "/"
-                }else {
-                    console.log("ERROR");
-                    console.log(xhr.responseText);
-                    alert(xhr.responseText);
-                }
-            }
-        };
-
-        formData.append("risk_matrix_id", riskMatrixID);
-        xhr.open("POST", '/delete-risk-matrix');
-        xhr.send(formData);
+    let answer = confirm("Are you sure you want to remove this project: "+projectName+"?");
+    if (!answer) {
+        return;
     }
+
+    // make AJAX request
+    let xhr = new XMLHttpRequest();
+    let formData = new FormData();
+
+    // handle response
+    xhr.onreadystatechange = function () {
+        if(xhr.readyState === XMLHttpRequest.DONE){
+            if (xhr.status === 200){
+                console.log("SUCCESS");
+                window.location = "/"
+            }else {
+                console.log("ERROR");
+                console.log(xhr.responseText);
+                alert(xhr.responseText);
+            }
+        }
+    };
+
+    formData.append("risk_matrix_id", riskMatrixID);
+    xhr.open("POST", '/delete-risk-matrix');
+    xhr.send(formData);
+}
 </script>
 </body>
 </html>
