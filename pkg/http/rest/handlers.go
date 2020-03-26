@@ -1,8 +1,10 @@
 package rest
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/jung-kurt/gofpdf"
 	"github.com/ottotech/riskmanagement/pkg/adding"
 	"github.com/ottotech/riskmanagement/pkg/config"
 	"github.com/ottotech/riskmanagement/pkg/deleting"
@@ -30,6 +32,7 @@ type App struct {
 	DeleteRisk       *DeleteRisk
 	DeleteRiskMatrix *DeleteRiskMatrix
 	AddMediaPath     *AddMediaPath
+	DownloadPDF      *DownloadPDF
 }
 
 type ListMatrix struct {
@@ -618,6 +621,91 @@ func (h *AddMediaPath) Handler(adder adding.Service, lister listing.Service) htt
 				return
 			}
 			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+	}
+}
+
+type DownloadPDF struct {
+}
+
+func (h *DownloadPDF) Handler(lister listing.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idx := strings.LastIndex(r.URL.Path, "/")
+		id, err := strconv.Atoi(r.URL.Path[idx+1:])
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			return
+		}
+		mat, err := lister.GetRiskMatrix(id)
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			return
+		}
+		mediapath, err := lister.GetMediaPath()
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			return
+		}
+		risks := lister.GetAllRisks(mat.ID)
+		filename := "risk_matrix.pdf"
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%v", filename))
+		pdf := gofpdf.New("P", "mm", "A4", "")
+		pdf.AddPage()
+		// Let's create the report header
+		pdf.SetFont("Times", "B", 18)
+		pdf.Cell(40, 10, "RiskMatrix Report")
+		pdf.Ln(-1)
+		pdf.SetFont("Times", "", 14)
+		pdf.Cell(40, 10, time.Now().Format("Mon Jan 2, 2006"))
+		pdf.Ln(-1)
+		pdf.SetFont("Times", "", 14)
+		pdf.Cell(40, 10, fmt.Sprintf("Project: %v.", mat.Project))
+		pdf.Ln(-1)
+		// Let's create the table headers
+		headers := []string{"Risk", "Probability", "Impact", "Rick Classification", "Risk Response Plan"}
+		for i := 0; i < len(headers); i++ {
+			pdf.SetFont("Times", "B", 10)
+			pdf.SetFillColor(240, 240, 240)
+			w := 20
+			if i > 2 {
+				w = 33
+			}
+			pdf.CellFormat(float64(w), 7, headers[i], "1", 0, "", true, 0, "")
+		}
+		pdf.Ln(-1)
+		// Let's create the table body
+		for _, r := range risks {
+			pdf.SetFont("Times", "", 8)
+			pdf.SetFillColor(255, 255, 255)
+			data := []string{r.Name, strconv.Itoa(r.Probability), strconv.Itoa(r.Impact), r.Classification, r.Strategy}
+			for i, d := range data {
+				w := 20
+				if i > 2 {
+					w = 33
+				}
+				pdf.CellFormat(float64(w), 7, d, "1", 0, "", true, 0, "")
+			}
+			pdf.Ln(-1)
+		}
+		// Let's add the risk matrix image
+		pdf.AddPage()
+		pdf.ImageOptions(mediapath+"/"+mat.Path, 8, 8, 0, 0, false, gofpdf.ImageOptions{ImageType: "PNG", ReadDpi: true}, 0, "")
+		buf := bytes.NewBuffer(nil)
+		err = pdf.Output(buf)
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
+			return
+		}
+		_, err = buf.WriteTo(w)
+		if err != nil {
+			config.Logger.Println(err)
+			http.Error(w, http.StatusText(500), http.StatusInternalServerError)
 			return
 		}
 	}

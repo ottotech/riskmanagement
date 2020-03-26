@@ -76,6 +76,7 @@ func main() {
 	mux.Handle("/add-risks", mw.Chain(app.AddRisk.Handler(adder, lister, updater), mw.MediaPathRequired(lister)))
 	mux.Handle("/delete-risks", mw.Chain(app.DeleteRisk.Handler(deleter, lister), mw.MediaPathRequired(lister)))
 	mux.Handle("/delete-risk-matrix", mw.Chain(app.DeleteRiskMatrix.Handler(deleter, lister), mw.MediaPathRequired(lister)))
+	mux.Handle("/download-pdf/", mw.Chain(app.DownloadPDF.Handler(lister)))
 	mux.Handle("/set-media-path", app.AddMediaPath.Handler(adder, lister))
 	mux.Handle("/media/", app.Media.Handler(lister))
 	mux.Handle("/shutdown", shutDownHandler(shutDownSignal))

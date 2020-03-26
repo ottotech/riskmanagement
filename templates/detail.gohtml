@@ -25,6 +25,9 @@
         a:hover {
             color: #00A8FF;
         }
+        a:link {
+            text-decoration: none;
+        }
         .not-allowed {
             cursor: not-allowed;
         }
@@ -48,6 +51,7 @@
     <p style="margin: 0">{{$RiskMatrix.Project}}</p>
     <br>
     <a id="jsCreate">Add risk in Risk Matrix</a>
+    <a href="/download-pdf/{{$RiskMatrix.ID}}" download style="margin-left: 10px">PDF</a>
     <a style="margin-left: 10px" id="jsSave">Save</a>
     <input tabindex="-1" id="js_risk_matrix_id" hidden value="{{$RiskMatrix.ID}}">
     <table id="myTable">
