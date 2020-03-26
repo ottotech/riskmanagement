@@ -32,6 +32,9 @@
             border-color: rgba(255, 204, 34, 0.97);
             border-width: 2px;
         }
+        .delete {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -238,6 +241,11 @@ function handleRiskDelete(e) {
         if (state === "new") {
             e.target.parentElement.parentElement.remove();
             return
+        }
+
+        let answer = confirm("Are you sure you want to remove this risk?");
+        if (!answer) {
+            return;
         }
 
         // make AJAX request
